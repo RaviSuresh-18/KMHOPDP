@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OPDP — Workflow UI</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-wrap">
+    <section id="loginView" class="card center-card">
+      <h2>      <div style="display: flex;text-align: center;align-items: center;justify-content: center;">
+         <div class="header-right"><img src="./logo/drkmh.jpg" alt="KMH" class="logo" /></div>
+       <div class="user-role" style="    font-size: large;    margin-left: 10px;    font-weight: bold;">KMH — Login</div>
+      </div></h2>
+      <input style="width:100%;padding:18px;border-radius:8px;border:1px solid var(--border);font-size:18px;margin-bottom: 10px;" id="username" type="text" maxlength="50" placeholder="Username" />
+      <input style="width:100%;padding:18px;border-radius:8px;border:1px solid var(--border);font-size:18px;margin-bottom: 10px;" id="password" type="password" maxlength="50" placeholder="Password" />
+      <button id="btnLogin" class="btn primary">Login</button>              
+
+    </section>
+
+    <header id="topHeader" class="site-header hidden">
+      <div class="header-left">
+        <div class="avatar">S</div>
+        <div class="user-info">
+          <div id="headerUsername" class="user-name"></div>         
+        </div>
+      </div>
+      <div style="display: flex;text-align: center;align-items: center;">
+         <div class="header-right"><img src="./logo/drkmh.jpg" alt="KMH" class="logo" /></div>
+       <div class="user-role" style="    font-size: large;    margin-left: 10px;    font-weight: bold;">KMH — Internals</div>
+      </div>
+     
+      <div class="header-actions"><button id="btnLogout" class="btn">Logout</button></div>
+    </header>
+
+    <section id="patientsView" class="card hidden">
+      <div class="patients-top">
+        <div>
+          <div class="meta-table">
+            <div style="justify-content: space-between;">
+               <div id="time-display" style="align-items: center;">00:00</div>
+               <div class="button-group" style="align-items: center;"> 
+                <button id="start-btn" >Start OP</button>
+
+                <img src="./Images/pause.png" id="pause-btn" style="display:none; width: 20px;" />  
+                <img src="./Images/play-buttton.png" id="resume-btn" style="display:none;width: 20px;"/>  
+                <img src="./Images/stop-button.png"id="stop-btn"style="display:none;width: 20px;" /> 
+                <img src="./Images/icn_add_user.png" />  
+                <img src="./Images/refresh_icon_n.png" /> 
+                <img src="./Images/ico_print.png" /> 
+                 
+                </div>
+            </div>
+            <div style="display: flex;justify-content: space-between;align-items: center;"><span><strong>Doctor Name</strong><span style="margin-left: 10px;">DR. PILLAI C.V</span></span><div><input type="button" value="Edit" class="btn ghost" id="editBtn" onclick="showeditpopup('popupBox')"></div></div>
+            <div><strong>Date & Time</strong><span>27-Sep-2025 08:00 AM - 05:00 PM</span></div>
+            <div><strong>Nurse</strong><span>M.Sathya</span></div>
+            <div><strong>Room No</strong><span>304</span></div>
+            <!-- <div>
+                <img src="./Images/icn_add_user.png" />  
+                <img src="./Images/refresh_icon_n.png" /> 
+                <img src="./Images/ico_print.png" /> 
+            </div> -->
+          </div>
+        </div>
+
+ <div id="popupBox" class="popup">
+  <div class="popup-content">
+    <span class="close"onclick="closeeditpopup('popupBox')">&times;</span>
+    <h2>Edit Details</h2>
+
+    <table class="popup-table">
+      <tr>
+        <td class="label">Nurse</td>
+        <td>
+          <select id="nurseSelect">
+            <option>Select Nurse</option>
+            <option>Riya</option>
+            <option>Kavitha</option>
+            <option>Meena</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Room No</td>
+        <td>
+          <select id="roomSelect">
+            <option>Select Room No</option>
+            <option>101</option>
+            <option>102</option>
+            <option>103</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Status</td>
+        <td>
+          <select id="statusSelect">
+            <option>Select Status</option>
+            <option>Close Op</option>
+            <option>Dealocate OP</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+
+    <div class="popup-actions">
+      <button id="Update">Update</button>
+    </div>
+  </div>
+</div>
+ <div id="billlpopupBox" class="popupp">
+  <div class="popup-content">
+    <span class="close"id="billclose" onclick="closeeditpopup('billlpopupBox')">&times;</span>
+    <h2>Bill Details</h2>
+
+    <table class="popup-table">
+      <tr>
+        <td class="label">Bill NO</td>
+        <td>
+          <input id="bill" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="7">
+        </td>
+      </tr>
+    </table>
+    <div class="popup-actions">
+      <button id="Updatebill">Update</button>
+    </div>
+  </div>
+</div>
+</div>
+
+      </div>
+      <table class="table list-table">
+        <thead>
+          <tr style="width: 100%;"><th style="width: 5%;">Sl.No</th><th style="width: 15%;">Slot</th><th style="width: 10%;">UHID</th><th style="width: 30%;">Patient Name</th><th style="width: 10%;">Bill No</th><th style="width: 20%;">Actions</th></tr>
+        </thead>
+        <tbody id="patientsTbody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="assessmentView" class="card hidden">
+      <div class="assessment-top">
+        <button id="backToPatients" class="btn ghost">← Back</button>
+        <h3 class="centered">Patient Detail</h3>
+         
+
+
+      </div>
+      <div style="display: flex;justify-content: space-between;">
+        <div>
+        <button id="CheckIn" onclick="Startcheckin()" class="btn ghost">Check In</button>
+         <button id="CheckOut" style="display: none;" onclick="saveandcheckout()" class="btn ghost">Check Out</button>
+        </div>
+       
+         <div id="timeshower"></div>
+      </div>
+
+      <div class="patient-details">
+        <table class="table compact">
+          <tbody>
+            <tr><td class="label"><b>Name</b></td><td id="detailName">SATHISH</td><td class="label"><b>UHID</b></td><td id="detailUHID">25642</td></tr>
+            <tr><td class="label"><b>DOB</b></td><td id="detailDOB">06-Aug-2001</td><td class="label"><b>Age</b></td><td id="detailAge">25</td></tr>
+            <tr><td class="label"><b>Gender</b></td><td id="detailGender">MALE</td><td class="label"><b>Address</b></td><td id="detailAddr">NO:3798 , PALIKARANI , CHENNAI</td></tr>
+            <tr><td class="label"><b>Bill No</b></td><td id="detailBill">28546</td><td class="label"><b>Reffered Consultant</b></td><td id="detailPrebook">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-target="triage">General Assessment</button>
+        <button class="tab" data-target="clinical">Prescriptions & Advises</button>
+        <button class="tab" data-target="diagnosis">Notes</button>
+        <button class="tab" data-target="prescription">Previous History</button>
+        <button class="tab" data-target="lab">Admission Request</button>
+        <button class="tab" data-target="pharmacy">Visit Summary</button>
+        <button class="tab" data-target="billing">Follow-up</button>
+      </nav>
+
+      <div class="tabcontent" id="triage">
+        <h4>Initial Vitals</h4>
+        <div class="vitals" style="display: flex; align-items: center;">
+          <label><b>PR</b> <input id="pr" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" maxlength="3" style="width: 40px;"> Bpm</label>
+          <label><b>RR</b> <input id="rr" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> /Min</label>
+          <label><b>BP Systolic</b> <input id="bps" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> Mm</label>
+          <label><b>BP Diastolic</b> <input id="bpd" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> Hg</label>
+          <label><b>Spo2</b> <input id="spo" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> %</label>
+          <label><b>Height</b> <input id="height" type="text" inputmode="numeric" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3"style="width: 40px;"> Cm</label>
+          <label><b>Weight</b> <input id="weight" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> Kg</label>
+        </div>
+
+        <label>Chief Complaints</label><textarea id="chief" rows="4"></textarea><div class="controls">
+  <button onclick="startRecording('chief')" id="recordChief">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('chief')">❌ Clear</button>
+</div>
+        <label>History</label><textarea id="history" rows="4"></textarea><div class="controls">
+ <button onclick="startRecording('history')" id="recordHistory">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('history')">❌ Clear</button>
+</div>
+        <label>Examination</label><textarea id="examination" rows="4"></textarea><div class="controls">
+<button onclick="startRecording('examination')" id="recordExam">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('examination')">❌ Clear</button>
+</div>
+
+        <div class="icd-section">
+          <label>ICD Code</label>
+          <div class="icd-row"><input id="icdInput" placeholder="Enter ICD code" style="height: 30px;width: 30%;" />
+            <button id="addIcd" class="btn" style=" color: white;background: black;font-size: revert-layer;margin-left: 10px;">Add</button></div>
+          <table id="icdTable" class="table">
+            <thead><tr style="width: 100%;"><th style="width: 30%;">ICD Code</th><th style="width: 65%;">Definition</th><th style="width: 5%;"></th></tr></thead>
+            <tbody>
+ <tr>
+      <td>G10</td>
+      <td>I25.111</td>
+       <td> <img src="./Images/icn_trash.png" /></td>
+    </tr>
+    <tr>
+      <td>Huntington's disease</td>
+      <td>atherosclerotic heart disease</td>
+      <td><img src="./Images/icn_trash.png" /></td>
+    </tr>
+            </tbody>
+          </table>
+        </div>
+                <div class="icd-section">
+          <label>Existing ICD Code</label>
+          <table id="icdTable" class="table">
+            <thead><tr style="width: 100%;"><th style="width: 30%;">ICD Code</th><th style="width: 65%;">Definition</th><th style="width: 5%;"></th></tr></thead>
+            <tbody>
+ <tr>
+      <tr>
+      <td>A37.81</td>
+      <td>whooping cough</td>
+       <td> <img src="./Images/icn_trash.png" /></td>
+    </tr>
+    <tr>
+      <td>F32.3</td>
+      <td>Major depressive disorder</td>
+      <td> <img src="./Images/icn_trash.png" /></td>
+    </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="tabcontent hidden" id="clinical">
+        <div class="prescription-cards">
+          <section class="card small">
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <button id="btnAddMed" class="btn ghost">+ Add Medicine</button>
+               <button id="btnviewpres" onclick="openModal('prescriptionModal')" class="btn ghost">View Previous Prescription</button>
+            </div>
+            <table id="rxTable" class="table compact">
+              <thead><tr style="width:100%;"><th style="width:55%;">Medicine</th><th style="width:15% ;">Frequency</th><th style="width:5%;">Days</th><th style="width:5%;">Quantity</th><th style="width:15% ;">Timing</th><th style="width:5%;">Action</th></tr></thead>
+              <tbody id="tbodyMed"></tbody>
+            </table>
+            <p class="note">Tip: Quantity auto-calculates as frequency × days.</p>
+          </section>
+
+          <section class="card small" >
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <button id="btnAddLab" class="btn ghost">+ Add Test</button>
+             <button id="btnviewtest" class="btn ghost" onclick="openModal('prescriptiontestModal')">View Previous Test</button>
+            </div>
+            <table id="labTable" class="table compact">
+              <thead><tr style="width: 100%;"><th style="width: 45%;">Test</th><th style="width: 10%;">Category</th><th style="width:10% ;">Priority</th><th style="width:20% ;">Instructions</th><th style="width: 10%;">Date</th><th style="width: 5%;">Action</th></tr></thead>
+              <tbody id="tbodyLab"></tbody>
+            </table>
+          </section>
+
+          <section class="card small">
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <button id="btnAddRD" class="btn ghost">+ Add Advice Consultant</button>
+              <!-- <button id="btnviewref" class="btn ghost">View Previous Reference</button> -->
+            </div>
+            <table id="RDTable" class="table compact">
+              <thead><tr style="width:100%;"><th style="width:20%;">Speciality</th><th style="width:30%;">Doctor</th><th style="width: 10%;">Priority</th><th style="width: 30%;">Instructions</th><th style="width: 5%;">Date</th><th style="width: 5%;">Action</th></tr></thead>
+              <tbody id="tbodyRD"></tbody>
+            </table>
+            <div class="footer">Date: <span id="today"></span></div>
+          </section>
+        </div>
+      </div>
+
+      <div class="tabcontent hidden" id="diagnosis">
+        <label>Doctor Notes</label><textarea id="DoctorNotes" rows="4"></textarea>
+<div class="controls">
+<button onclick="startRecording('DoctorNotes')" id="recordDoctorNotes">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('DoctorNotes')">❌ Clear</button>
+</div>
+        <label>Pain Assessment</label><textarea id="PainAssessment" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('PainAssessment')" id="recordPainAssessment">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('PainAssessment')">❌ Clear</button>
+</div>
+        <label>Diet Advice</label><textarea id="DietAdvice" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('DietAdvice')" id="recordPainAssessment">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('DietAdvice')">❌ Clear</button>
+</div>
+
+      </div>
+
+      <div class="tabcontent hidden" id="prescription">
+        <h4>Past Medical History</h4>
+       <div class="filters">
+  <div class="filter-item">
+    <span>From</span>
+    <input id="filterFromDate" style="width: 70%;" type="date">
+  </div>
+
+  <div class="filter-item">
+    <span>To</span>
+    <input id="filterToDate" style="width: 80%;" type="date">
+  </div>
+
+  <div class="filter-item">
+    <span>Speciality</span>
+    <select id="filterSpec">
+      <option value="">All</option>
+      <option>Cardiology</option>
+      <option>Orthopedics</option>
+      <option>General Medicine</option>
+      <option>Dermatology</option>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <span>Visit Type</span>
+    <select id="filterVisit">
+      <option value="">All</option>
+      <option>OP</option>
+      <option>IP</option>
+      <option>Emergency</option>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <span>Doctor</span>
+    <select id="filterDoctor">
+      <option value="">All</option>
+      <option>Dr. Mehta</option>
+      <option>Dr. Sharma</option>
+      <option>Dr. Rao</option>
+      <option>Dr. Iyer</option>
+    </select>
+  </div>
+
+  <div class="filter-actions">
+    <button class="btn ghost" id="applyFilters">Apply</button>
+    <button class="btn ghost" id="resetFilters">Reset</button>
+  </div>
+</div>
+
+        <table id="historyTable" class="table">
+          <thead><tr style="width: 100%;"><th style="width: 10%;" >Date</th><th style="width: 15%;">Speciality</th><th style="width: 20%;">Diagnosis</th><th style="width: 10%;">Visit Type</th><th style="width: 35%;">Doctor</th><th style="width: 10%;">Action</th></tr></thead>
+          <tbody>
+            <tr><td>2025-09-15</td><td>Cardiology</td><td>Hypertension</td><td><span class="pill opd">OP</span></td><td>Dr. Mehta</td><td><button class="btn ghost" data-date="2025-09-15">Open</button></td></tr>
+            <tr><td>2025-08-02</td><td>Orthopedics</td><td>Knee Pain</td><td><span class="pill ipd">IP</span></td><td>Dr. Sharma</td><td><button class="btn ghost" data-date="2025-08-02">Open</button></td></tr>
+            <tr><td>2025-07-10</td><td>Dermatology</td><td>Eczema</td><td><span class="pill opd">OP</span></td><td>Dr. Rao</td><td><button class="btn ghost" data-date="2025-07-10">Open</button></td></tr>
+            <tr><td>2025-06-22</td><td>General Medicine</td><td>Fever</td><td><span class="pill opd">OP</span></td><td>Dr. Iyer</td><td><button class="btn ghost" data-date="2025-06-22">Open</button></td></tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="tabcontent hidden" id="lab">
+        <h4>Admission Advice</h4>
+        <label>Advice Type <select id="adviceType"><option value="Select">-- Select --</option><option value="NP">NO procedure</option><option value="MedicalManagement">Medical Management</option><option value="Surgery">Surgery / Procedure</option><option value="both">Both</option></select></label>
+        <label id="surgeryLabel" class="hidden">Type of Surgery / Procedure <input id="surgeryType" style="width: 50%;"></label>
+        <label>Doctor's Advice <textarea id="doctorAdvice" rows="6"></textarea></label>
+        <div class="controls">
+<button onclick="startRecording('doctorAdvice')" id="recordsurgeryType">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('doctorAdvice')">❌ Clear</button>
+</div>
+
+      </div>
+
+      <div class="tabcontent hidden" id="pharmacy">
+        <div id="summaryBox" class="summary"><h4>Visit Summary</h4><textarea id="summaryTextarea" rows="8"></textarea></div>
+        <div class="controls" style="">
+<button onclick="startRecording('summaryTextarea')" id="recordsummaryTextarea">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('summaryTextarea')">❌ Clear</button>
+</div>
+     <div style="justify-content: center;"> <button 
+  id="generateSummary" 
+  class="btn ghost" 
+  style="
+    margin-top: 20px; 
+    background: linear-gradient(135deg, #0078ff, #00d4ff);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  "
+  onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 15px rgba(0,0,0,0.3)';"
+  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.2)';"
+>
+  🤖 Generate Summary with AI
+</button></div>  
+
+      </div>
+
+      <div class="tabcontent hidden" id="billing">
+        <div class="">
+           <h4 style="margin-top: 10px;">Book Appointments</h4>
+<table id="appointmentTable" class="form-table" border="1" cellpadding="8" cellspacing="0">
+
+  <tr>
+    <th>Date</th>
+    <td><input id="date" type="date" required></td>
+  </tr>
+  <tr>
+    <th>Speciality</th>
+    <td>
+      <select id="speciality" required>
+        <option value="">--Select--</option>
+        <option>Cardiology</option>
+        <option>Orthopedics</option>
+        <option>Dermatology</option>
+        <option>General Medicine</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Doctor</th>
+    <td>
+      <select id="doctor" required>
+        <option>Dr.C.v.Pillai</option>
+        <option>Dr.Vidhiyachaya</option>
+        <option>Dr.Bharath</option>
+        <option>Dr.Nagalakshmi</option>
+        <option>Dr.Devi</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Schedule</th>
+    <td>
+      <select id="schedule">
+        <option>8am - 1pm</option>
+        <option>2pm - 4pm</option>
+        <option>Evening</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Slot</th>
+    <td>
+      <select id="slot">
+        <option>09:00 AM</option>
+        <option>09:30 AM</option>
+        <option>10:00 AM</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align:center;">
+      <button type="button" class="btn primary" id="bookBtn">Book</button>
+      <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+    </td>
+  </tr>
+</table>
+
+          <div class="upcoming">
+            <h4>Upcoming Appointments</h4>
+            <table id="appointmentsTable" class="table compact">
+              <thead><tr><th>Date</th><th>Speciality</th><th>Doctor</th><th>Schedule</th><th>Slot</th></tr></thead>
+              <tbody id="appointmentsTbody">
+                <tr><td>2025-10-05</td><td>Cardiology</td><td>Dr. Mehta</td><td>8am - 1pm</td><td>09:00 AM</td></tr>
+                <tr><td>2025-10-05</td><td>Orthopedics</td><td>Dr. Sharma</td><td>8am - 1pm</td><td>12:00 PM</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <div class="tab-navigation" style="    text-align: center;    margin-top: 10px;">
+  <button id="prevBtn" class="btn ghost">Previous</button>
+  <button id="saveNextBtn" class="btn primary">Save & Next</button>
+  <button class="btn ghost" style="display:  none;" id="printbtn" onclick="fnCallPrint(this,'finalprint')">🖨 Print Prescription</button>
+</div>
+
+<div id="prescriptionModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Previous Prescriptions</h3>
+      <span class="close" onclick="closeModal('prescriptionModal')">&times;</span>
+    </div>
+
+    <table id="previousList">
+      <thead>
+        <tr>
+          <th>Consultation Date</th>
+          <th style="font-weight: lighter;">10-11-2025</th>
+          <th>Docter Name</th>
+          <th style="font-weight: lighter;" colspan="99">Dr.JAYARAJ.A.K</th>
+        </tr>
+        <tr>
+          <th>Select</th>
+          <th>Medicine</th>
+          <th>Frequency</th>
+          <th>Days</th>
+          <th>Quantity</th>
+          <th>Timing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example previous prescriptions -->
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Paracetamol 500mg</td>
+          <td>2</td>
+          <td>5</td>
+          <td>10</td>
+          <td>Morning, Night</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Azithromycin 250mg</td>
+          <td>1</td>
+          <td>3</td>
+          <td>3</td>
+          <td>Morning</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Vitamin C</td>
+          <td>1</td>
+          <td>7</td>
+          <td>7</td>
+          <td>Evening</td>
+        </tr>
+      </tbody>
+    </table>
+ <table id="previousList">
+      <thead>
+        <tr>
+          <th>Consultation Date</th>
+          <th style="font-weight: lighter;">11-11-2025</th>
+          <th>Docter Name</th>
+          <th style="font-weight: lighter;" colspan="99">Dr.JAYARAJ.A.K</th>
+        </tr>
+        <tr>
+          <th>Select</th>
+          <th>Medicine</th>
+          <th>Frequency</th>
+          <th>Days</th>
+          <th>Quantity</th>
+          <th>Timing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example previous prescriptions -->
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Levothyroxine</td>
+          <td>2</td>
+          <td>5</td>
+          <td>10</td>
+          <td>Morning</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Azithromycin 250mg</td>
+          <td>1</td>
+          <td>3</td>
+          <td>3</td>
+          <td>Morning,Night</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Atorvastatin</td>
+          <td>1</td>
+          <td>7</td>
+          <td>7</td>
+          <td>Evening</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="text-align:right;">
+      <button onclick="importSelected()">Import Selected</button>
+      <button onclick="closeModal('prescriptionModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="prescriptiontestModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Previous Prescriptions</h3>
+      <span class="close" onclick="closeModal('prescriptionModal')">&times;</span>
+    </div>
+
+<table id="previoustestList">
+      <thead>
+        <tr>
+          <th>Consultation Date</th>
+          <th style="font-weight: lighter;">11-11-2025</th>
+          <th>Docter Name</th>
+          <th style="font-weight: lighter;" colspan="99">Dr.JAYARAJ.A.K</th>
+        </tr>
+        <tr>
+          <th>Select</th>
+          <th>Test</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Instructions</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example previous prescriptions -->
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>CBC</td>
+          <td>Blood</td>
+          <td>Urgent</td>
+          <td>-</td>
+          <td>10-11-2025</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>RFT</td>
+       <td>Blood</td>
+          <td>Urgent</td>
+          <td>-</td>
+          <td>10-11-2025</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>USG-Abdomen</td>
+       <td>Imaging</td>
+          <td>Urgent</td>
+          <td>empty stomach fasting </td>
+          <td>10-11-2025</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="text-align:right;">
+      <button onclick="importSelected()">Import Selected</button>
+      <button onclick="closeModal('prescriptiontestModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="finalprint" style="display:none;">
+
+<style>
+
+/* ================================
+   GLOBAL PRINT SETTINGS
+================================*/
+
+.bodyprint {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    background: #fff;
+    margin: 0;
+    padding: 2mm;
+}
+
+/* ================================
+   HEADER
+================================*/
+
+.title {
+    font-size: 22px;
+    font-weight: bold;
+}
+.sub-title {
+    font-size: 14px;
+    margin-top: -6px;
+}
+
+/* ================================
+   SECTIONS
+================================*/
+
+.section-title {
+  margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    padding-bottom: 4px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 14px;
+}
+.info-row div {
+    width: 32%;
+}
+
+.textareaprint {
+    width: 98%;
+    border-radius: 5px;
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 14px;
+    resize: none;
+    border: none;
+}
+
+/* ================================
+   TABLE STYLING
+================================*/
+
+.tableprint {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.tableprint th,
+.tableprint td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: left;
+}
+
+/* ================================
+   FOOTER
+================================*/
+
+.footerr {
+    margin-top: 25px;
+    border-top: 2px solid #000;
+    padding-top: 10px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 18px;
+}
+
+.footer-sign {
+    margin-top: 15px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* ================================
+   PRINT OVERRIDES
+================================*/
+
+@media print {
+    textarea { border: none; }
+}
+
+</style>
+
+<div class="bodyprint">
+
+<!-- PATIENT DETAILS -->
+<div class="section-title">Patient Details</div>
+
+<div class="info-row">
+    <div><b>Name:</b> SATHISH</div>
+    <div><b>UHID:</b> 25642</div>
+    <div><b>Date:</b> 27-Sep-2025</div>
+</div>
+
+<div class="info-row">
+    <div><b>DOB:</b> 06-Aug-2001</div>
+    <div><b>Age:</b> 25</div>
+    <div><b>Gender:</b> MALE</div>
+</div>
+
+<!-- VITALS -->
+<div class="section-title">Vitals</div>
+<table class="tableprint">
+    <tr><th>PR</th><td>78 bpm</td><th>RR</th><td>18/min</td><th>BP (Sys)</th><td>120</td><th>BP (Dia)</th><td>80</td></tr>
+    <tr><th>SpO2</th><td>98%</td><th>Height</th><td>170 cm</td><th>Weight</th><td>65 kg</td><td colspan="2"></td></tr>
+</table>
+
+<!-- CHIEF COMPLAINTS -->
+<div class="section-title">Chief Complaints</div>
+<textarea rows="3" class="textareaprint">Fever and body pain since 2 days</textarea>
+
+<!-- HISTORY -->
+<div class="section-title">History</div>
+<textarea rows="3" class="textareaprint">No previous major illness</textarea>
+
+<!-- EXAMINATION -->
+<div class="section-title">Examination</div>
+<textarea rows="3" class="textareaprint">Patient stable. No abnormalities noted.</textarea>
+
+<!-- PAIN -->
+<div class="section-title">Pain Assessment</div>
+<textarea rows="2" class="textareaprint">Pain Score: 4/10 — Mild abdominal pain</textarea>
+
+<!-- DIET -->
+<div class="section-title">Diet Advice</div>
+<textarea rows="2" class="textareaprint">Take liquid food for 2 days. Do not use hot or spicy masalas.</textarea>
+
+<!-- ICD CODES -->
+<div class="section-title">ICD Codes</div>
+<table class="tableprint">
+<tr><th>ICD Code</th><th>Description</th></tr>
+<tr><td>G10</td><td>Huntington’s disease</td></tr>
+<tr><td>F32.3</td><td>Major depressive disorder</td></tr>
+<tr><td>J00</td><td>Common Cold</td></tr>
+<tr><td>N39.0</td><td>Urinary Tract Infection</td></tr>
+</table>
+
+<!-- PRESCRIPTION -->
+<div class="section-title">Prescription</div>
+<table class="tableprint">
+<tr><th>Sl.No</th><th>Medicine</th><th>Frequency</th><th>Days</th><th>Qty</th><th>Timing</th></tr>
+<tr><td>1</td><td>Paracetamol 500mg</td><td>2</td><td>5</td><td>10</td><td>Morning, Night</td></tr>
+<tr><td>2</td><td>Azithromycin 250mg</td><td>1</td><td>3</td><td>3</td><td>Morning</td></tr>
+<tr><td>3</td><td>Vitamin C</td><td>1</td><td>7</td><td>7</td><td>Evening</td></tr>
+</table>
+
+<!-- LAB & TEST -->
+<div class="section-title">Lab & Imaging Test</div>
+<table class="tableprint">
+<tr><th>#</th><th>Test</th><th>Category</th><th>Priority</th><th>Instructions</th><th>Date</th></tr>
+<tr><td>1</td><td>CBC</td><td>Blood</td><td>Urgent</td><td>-</td><td>10-11-2025</td></tr>
+<tr><td>2</td><td>RFT</td><td>Blood</td><td>Urgent</td><td>-</td><td>10-11-2025</td></tr>
+<tr><td>3</td><td>USG-Abdomen</td><td>Imaging</td><td>Urgent</td><td>empty stomach fasting</td><td>10-11-2025</td></tr>
+</table>
+
+<!-- ADMISSION -->
+<div class="section-title">Admission Request</div>
+<textarea rows="3" class="textareaprint">Medical management recommended. No surgery required.</textarea>
+
+<!-- SUMMARY -->
+<div class="section-title">Visit Summary</div>
+<textarea rows="4" class="textareaprint">Patient advised rest, fluids, and medication adherence.</textarea>
+
+<!-- FOLLOW-UP -->
+<div class="section-title">Follow-Up Appointment</div>
+<table class="tableprint">
+<tr><th>#</th><th>Date</th><th>Doctor</th><th>Time & slot</th></tr>
+<tr><td>1</td><td>05-Oct-2025</td><td>Dr. Mehta</td><td>09:00 AM</td></tr>
+</table>
+
+<!-- SIGNATURE -->
+<div class="footer-sign">
+    Dr. JAYARAJ A.K<br>
+    Consultant Physician
+</div>
+
+</div>
+</div>
+
+
+
+
+
+    </section>
+  </main>
+  <script src="/jquery-3.6.4.min.js"></script>
+  <script src="/script.js"></script>
+
+</body>
+</html>
