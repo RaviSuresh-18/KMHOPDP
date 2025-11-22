@@ -1,0 +1,170 @@
+.loop-nav {
+	border-top: 1px solid #DDD;
+}
+.loop-nav-inner {
+	border-top: 1px solid #FFF;
+	padding: 20px 0;
+}
+.pag-nav {
+	font-size:12px;
+	line-height:20px;
+	font-weight:bold;
+	text-align:center;
+}
+.pag-nav a,.pag-nav span {
+	color:#555;
+	margin:0 5px;
+	border:1px solid #CCC;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	display:inline-block;
+	padding:4px 8px;
+	background-color:#E7E7E7;
+	background-image:-ms-linear-gradient(top,#EEE,#E7E7E7);
+	background-image:-moz-linear-gradient(top,#EEE,#E7E7E7);
+	background-image:-o-linear-gradient(top,#EEE,#E7E7E7);
+	background-image:-webkit-gradient(linear,left top,left bottom,from(#EEE),to(#E7E7E7));
+	background-image:-webkit-linear-gradient(top,#EEE,#E7E7E7);
+	background-image:linear-gradient(top,#EEE,#E7E7E7);
+	-webkit-box-shadow:inset 0 1px 0 #fff,0 1px 1px rgba(0,0,0,.1);
+	box-shadow:inset 0 1px 0 #fff,0 1px 1px rgba(0,0,0,.1);
+}
+.pag-nav a:hover {
+	background-color:#D7D7D7;
+	border:1px solid #999;
+	color:#000;
+	text-decoration:none;
+	-webkit-box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(0,0,0,.2);
+	box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(0,0,0,.2);
+}
+.pag-nav span {
+	color:#999
+}
+.pag-nav .current {
+	background:#F7F7F7;
+	border:1px solid #BBB;
+	-webkit-box-shadow:inset 0 1px 5px rgba(0,0,0,0.25),0 1px 0 #fff;
+	box-shadow: inset 0 1px 5px rgba(0,0,0,0.25),0 1px 0 #fff;
+}
+
+<div class="wp-pagenavi">
+<span class="pages">Page 2 of 25</span><a href="http://www.tv.srivideo.net/category/magazines/" class="prev">«</a><a href="http://www.tv.srivideo.net/category/magazines/" class="page smaller">1</a><span class="current">2</span><a href="http://www.tv.srivideo.net/category/magazines/page/3" class="page larger">3</a><a href="http://www.tv.srivideo.net/category/magazines/page/4" class="page larger">4</a><a href="http://www.tv.srivideo.net/category/magazines/page/5" class="page larger">5</a><span class="extend">...</span><a href="http://www.tv.srivideo.net/category/magazines/page/10" class="larger page">10</a><a href="http://www.tv.srivideo.net/category/magazines/page/20" class="larger page">20</a><span class="extend">...</span><a href="http://www.tv.srivideo.net/category/magazines/page/3" class="next">»</a><a href="http://www.tv.srivideo.net/category/magazines/page/25" class="last">Last »</a>
+</div>
+
+$('#dtofbirth').datepicker({
+				dateFormat : 'dd-M-yy',
+				showOn: "button",
+                buttonImage: "https://downloads.tdscpc.gov.in/images/calendar.gif",
+                buttonImageOnly: true ,
+				changeMonth : true,
+				changeYear : true,
+				maxDate : 0,
+				yearRange: "-100:c+5"
+		});
+		
+{
+background-position: -57px -123px;
+background-position-x: -57px;
+background-position-y: -123px;
+width: 13px;
+height: 14px;
+margin: 3px 5px 0 5px;
+float: left;
+cursor: pointer;
+}
+$('#btnSubmit').click(function() {
+if ($('#chktech input:checked').length > 0) {
+return true;
+}
+else {
+alert('Please select atleast one technology')
+return false;
+}
+})
+$('#btnSubmit').click(function() {
+if ($('#rdbtnGender :radio:checked').length > 0) {
+return true;
+}
+else {
+alert('Please select Gender')
+return false;
+}
+})
+
+element.style {
+}
+Matched CSS Rules
+watch-live-cricket-streaming_1.htmmedia="screen"
+
+.ra1-pw-popup-i {
+position: relative;
+border: 1px solid #bababa;
+background-color: #fff;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+-moz-background-clip: padding;
+-webkit-background-clip: padding-box;
+background-clip: padding-box;
+zoom: 1;
+letter-spacing: normal;
+word-spacing: normal;
+}
+user agent stylesheetdi
+.ra1-pw-popup-title {
+color: #4e8eb2!important;
+font: bold 12px/14px Arial,Helvetica!important;
+background-color: #e4f8ff!important;
+-webkit-border-radius: 4px 4px 0 0;
+-moz-border-radius: 4px 4px 0 0;
+border-radius: 4px 4px 0 0;
+-moz-background-clip: padding;
+-webkit-background-clip: padding-box;
+background-clip: padding-box;
+padding: 3px 7px 4px!important;
+margin: 0!important;
+text-transform: none!important;
+display: block!important;
+float: none!important;
+width: auto!important;
+z-index: 1!important;
+}
+user agent stylesheeth2 {
+display: block;
+font-size: 1.5em;
+-webkit-margin-before: 0.83em;
+-webkit-margin-after: 0.83em;
+-webkit-margin-start: 0px;
+-webkit-margin-end: 0px;
+font-weight: bold;
+}
+.ra1-pw-popup-close {
+position: absolute;
+z-index: 99;
+cursor: pointer;
+cursor: hand;
+top: -1px;
+right: -1px;
+right: 7px;
+top: 7px;
+font-size: 1px;
+background: url(../img/ra1-icoset.png) no-repeat 0 0;
+width: 8px;
+height: 8px;
+}
+.ra1-pw-popup {
+position: absolute;
+z-index: 9999;
+padding: 5px;
+min-width: 248px;
+background: url(../img/bg.png);
+background: rgba(0,0,0,0.1);
+-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
+border-radius: 8px;
+-moz-background-clip: padding;
+-webkit-background-clip: padding-box;
+background-clip: padding-box;
+zoom: 1;
+}
+<div style="width: 280px; text-align: left; display: none; position: absolute; top: 79px; left: 548px;" class="ra1-pw-popup pw-popup-type_simplelist pw-popup-side_left"><div class="ra1-pw-popup-i"><span class="ra1-pw-popup-close"></span><h2 class="ra1-pw-popup-title">Share with friends:</h2><div class="ra1-pw-popup-area"><ul class="ra1-pw-popup__ul ra1-pw_size_small"><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-facebook"></i> <span class="ra1-pw-txt ra1-pw-txt-facebook">Facebook</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-twitter"></i> <span class="ra1-pw-txt ra1-pw-txt-twitter">Twitter</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-mail"></i> <span class="ra1-pw-txt ra1-pw-txt-mail">Email</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-print"></i> <span class="ra1-pw-txt ra1-pw-txt-print">Print</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-stumbleupon"></i> <span class="ra1-pw-txt ra1-pw-txt-stumbleupon">StumbleUpon</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-favorites"></i> <span class="ra1-pw-txt ra1-pw-txt-favorites">Favorites</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-linkedin"></i> <span class="ra1-pw-txt ra1-pw-txt-linkedin">LinkedIn</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-googlebookmarks"></i> <span class="ra1-pw-txt ra1-pw-txt-googlebookmarks">Google Bookmarks</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-tumblr"></i> <span class="ra1-pw-txt ra1-pw-txt-tumblr">Tumblr</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-reddit"></i> <span class="ra1-pw-txt ra1-pw-txt-reddit">Reddit</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-pinterest"></i> <span class="ra1-pw-txt ra1-pw-txt-pinterest">Pinterest</span></a></li><li style=""><a href=""><i class="ra1-pw-icon ra1-pw-icon-msmessenger"></i> <span class="ra1-pw-txt ra1-pw-txt-msmessenger">MS Messenger</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-myspace"></i> <span class="ra1-pw-txt ra1-pw-txt-myspace">MySpace</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-delicious"></i> <span class="ra1-pw-txt ra1-pw-txt-delicious">Delicious</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-digg"></i> <span class="ra1-pw-txt ra1-pw-txt-digg">Digg</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-orkut"></i> <span class="ra1-pw-txt ra1-pw-txt-orkut">Orkut</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-gmail"></i> <span class="ra1-pw-txt ra1-pw-txt-gmail">GMail</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-blogger"></i> <span class="ra1-pw-txt ra1-pw-txt-blogger">Blogger</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-yahoomail"></i> <span class="ra1-pw-txt ra1-pw-txt-yahoomail">Yahoo Mail</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-hotmail"></i> <span class="ra1-pw-txt ra1-pw-txt-hotmail">Hotmail</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-aolmail"></i> <span class="ra1-pw-txt ra1-pw-txt-aolmail">AOL Mail</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-livejournal"></i> <span class="ra1-pw-txt ra1-pw-txt-livejournal">LiveJournal</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-posterous"></i> <span class="ra1-pw-txt ra1-pw-txt-posterous">Posterous</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-aollifestream"></i> <span class="ra1-pw-txt ra1-pw-txt-aollifestream">AOL LifeStream</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-wordpress"></i> <span class="ra1-pw-txt ra1-pw-txt-wordpress">WordPress</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-vkontakte"></i> <span class="ra1-pw-txt ra1-pw-txt-vkontakte">VKontakte</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-baidu"></i> <span class="ra1-pw-txt ra1-pw-txt-baidu">Baidu</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-mailru"></i> <span class="ra1-pw-txt ra1-pw-txt-mailru">Mail.ru</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-hyves"></i> <span class="ra1-pw-txt ra1-pw-txt-hyves">Hyves</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-googleplus"></i> <span class="ra1-pw-txt ra1-pw-txt-googleplus">Google+</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-xing"></i> <span class="ra1-pw-txt ra1-pw-txt-xing">XING</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-meinvz"></i> <span class="ra1-pw-txt ra1-pw-txt-meinvz">MeinVZ</span></a></li><li style="display: none;"><a href=""><i class="ra1-pw-icon ra1-pw-icon-skyrock"></i> <span class="ra1-pw-txt ra1-pw-txt-skyrock">Skyrock</span></a></li><li><a href=""><i class="ra1-pw-icon ra1-pw-icon-more"></i> <span class="ra1-pw-txt ra1-pw-txt-more">More</span></a></li></ul></div><div class="ra1-pw-popup-footer"><a href="http://www.po.st" class="ra1-pw-powered">Powered by Po.st</a><a href="http://www.radiumone.com/about/privacy.html" class="ra1-pw-privacy">Privacy</a></div></div></div>
