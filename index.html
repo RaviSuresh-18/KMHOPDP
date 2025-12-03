@@ -4,14 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>OPDP — Workflow UI</title>
-  <link rel="stylesheet" href="style.css">
-   <!-- <link rel="stylesheet" href="../css/main.css"> -->
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <main class="app-wrap">
     <section id="loginView" class="card center-card">
       <h2>      <div style="display: flex;text-align: center;align-items: center;justify-content: center;">
-         <div class="header-right"><img src="./Images/drkmh.jpg" alt="KMH" class="logo" /></div>
+         <div class="header-right"><img src="./logo/drkmh.jpg" alt="KMH" class="logo" /></div>
        <div class="user-role" style="    font-size: large;    margin-left: 10px;    font-weight: bold;">KMH — Login</div>
       </div></h2>
       <input style="width:100%;padding:18px;border-radius:8px;border:1px solid var(--border);font-size:18px;margin-bottom: 10px;" id="username" type="text" maxlength="50" placeholder="Username" />
@@ -28,7 +27,7 @@
         </div>
       </div>
       <div style="display: flex;text-align: center;align-items: center;">
-         <div class="header-right"><img src="./Images/drkmh.jpg" alt="KMH" class="logo" /></div>
+         <div class="header-right"><img src="./logo/drkmh.jpg" alt="KMH" class="logo" /></div>
        <div class="user-role" style="    font-size: large;    margin-left: 10px;    font-weight: bold;">KMH — Internals</div>
       </div>
      
@@ -53,7 +52,7 @@
                  
                 </div>
             </div>
-            <div style="display: flex;justify-content: space-between;align-items: center;"><span><strong>Doctor Name</strong><span style="margin-left: 10px;">DR. PILLAI C.V</span></span><div><input type="button" value="Edit" class="btn ghost" id="editBtn" onclick="showeditpopup('popupBox')"></div></div>
+            <div style="display: flex;justify-content: space-between;align-items: center;"><span><strong>Doctor Name</strong><span style="margin-left: 10px;">Dr.ASHOKKUMAR</span></span><div><input type="button" value="Edit" class="btn ghost" id="editBtn" onclick="showeditpopup('popupBox')"></div></div>
             <div><strong>Date & Time</strong><span>27-Sep-2025 08:00 AM - 05:00 PM</span></div>
             <div><strong>Nurse</strong><span>M.Sathya</span></div>
             <div><strong>Room No</strong><span>304</span></div>
@@ -206,7 +205,11 @@
   <button onclick="stopRecording()">⏹ Stop</button>
   <button onclick="clearText('examination')">❌ Clear</button>
 </div>
-
+        <label>Allergies / intolerances</label><textarea id="Allergies" rows="4"></textarea><div class="controls">
+<button onclick="startRecording('Allergies')" id="Allergies">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('Allergies')">❌ Clear</button>
+</div>
         <div class="icd-section">
           <label>ICD Code</label>
           <div class="icd-row"><input id="icdInput" placeholder="Enter ICD code" style="height: 30px;width: 30%;" />
@@ -300,6 +303,18 @@
 <button onclick="startRecording('PainAssessment')" id="recordPainAssessment">🎙 Record</button>
   <button onclick="stopRecording()">⏹ Stop</button>
   <button onclick="clearText('PainAssessment')">❌ Clear</button>
+</div>
+        <label>Plan of Care</label><textarea id="POC" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('POC')" id="recordPOC">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('POC')">❌ Clear</button>
+</div>
+        <label>Physicial Activity</label><textarea id="PhysicialActivity" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('PhysicialActivity')" id="PhysicialActivity">🎙 Record</button>
+  <button onclick="stopRecording()">⏹ Stop</button>
+  <button onclick="clearText('PhysicialActivity')">❌ Clear</button>
 </div>
         <label>Diet Advice</label><textarea id="DietAdvice" rows="3"></textarea>
 <div class="controls">
@@ -670,9 +685,7 @@
 
 <style>
 
-/* ================================
-   GLOBAL PRINT SETTINGS
-================================*/
+
 
 .bodyprint {
     font-family: Arial, Helvetica, sans-serif;
@@ -682,9 +695,7 @@
     padding: 2mm;
 }
 
-/* ================================
-   HEADER
-================================*/
+
 
 .title {
     font-size: 22px;
@@ -695,9 +706,7 @@
     margin-top: -6px;
 }
 
-/* ================================
-   SECTIONS
-================================*/
+
 
 .section-title {
   margin-top: 10px;
@@ -727,9 +736,7 @@
     border: none;
 }
 
-/* ================================
-   TABLE STYLING
-================================*/
+
 
 .tableprint {
     width: 100%;
@@ -745,9 +752,6 @@
     text-align: left;
 }
 
-/* ================================
-   FOOTER
-================================*/
 
 .footerr {
     margin-top: 25px;
@@ -758,15 +762,15 @@
     line-height: 18px;
 }
 
-.footer-sign {
-    margin-top: 15px;
+.footersign {
+    margin-top: 30px;
     font-size: 15px;
     font-weight: bold;
+    display: flex;
+    text-align: end;
 }
 
-/* ================================
-   PRINT OVERRIDES
-================================*/
+
 
 @media print {
     textarea { border: none; }
@@ -776,7 +780,6 @@
 
 <div class="bodyprint">
 
-<!-- PATIENT DETAILS -->
 <div class="section-title">Patient Details</div>
 
 <div class="info-row">
@@ -791,53 +794,37 @@
     <div><b>Gender:</b> MALE</div>
 </div>
 
-<!-- VITALS -->
 <div class="section-title">Vitals</div>
 <table class="tableprint">
     <tr><th>PR</th><td>78 bpm</td><th>RR</th><td>18/min</td><th>BP (Sys)</th><td>120</td><th>BP (Dia)</th><td>80</td></tr>
     <tr><th>SpO2</th><td>98%</td><th>Height</th><td>170 cm</td><th>Weight</th><td>65 kg</td><td colspan="2"></td></tr>
 </table>
 
-<!-- CHIEF COMPLAINTS -->
 <div class="section-title">Chief Complaints</div>
 <textarea rows="3" class="textareaprint">Fever and body pain since 2 days</textarea>
 
-<!-- HISTORY -->
 <div class="section-title">History</div>
 <textarea rows="3" class="textareaprint">No previous major illness</textarea>
 
-<!-- EXAMINATION -->
 <div class="section-title">Examination</div>
 <textarea rows="3" class="textareaprint">Patient stable. No abnormalities noted.</textarea>
 
-<!-- PAIN -->
-<div class="section-title">Pain Assessment</div>
-<textarea rows="2" class="textareaprint">Pain Score: 4/10 — Mild abdominal pain</textarea>
-
-<!-- DIET -->
-<div class="section-title">Diet Advice</div>
-<textarea rows="2" class="textareaprint">Take liquid food for 2 days. Do not use hot or spicy masalas.</textarea>
-
-<!-- ICD CODES -->
 <div class="section-title">ICD Codes</div>
 <table class="tableprint">
 <tr><th>ICD Code</th><th>Description</th></tr>
 <tr><td>G10</td><td>Huntington’s disease</td></tr>
 <tr><td>F32.3</td><td>Major depressive disorder</td></tr>
 <tr><td>J00</td><td>Common Cold</td></tr>
-<tr><td>N39.0</td><td>Urinary Tract Infection</td></tr>
 </table>
 
-<!-- PRESCRIPTION -->
-<div class="section-title">Prescription</div>
+<div class="section-title" >Prescription</div>
 <table class="tableprint">
 <tr><th>Sl.No</th><th>Medicine</th><th>Frequency</th><th>Days</th><th>Qty</th><th>Timing</th></tr>
-<tr><td>1</td><td>Paracetamol 500mg</td><td>2</td><td>5</td><td>10</td><td>Morning, Night</td></tr>
-<tr><td>2</td><td>Azithromycin 250mg</td><td>1</td><td>3</td><td>3</td><td>Morning</td></tr>
-<tr><td>3</td><td>Vitamin C</td><td>1</td><td>7</td><td>7</td><td>Evening</td></tr>
+<tr><td>1</td><td>DOLO 650 TAB</br><label style="font-size: 8px;">PARACETAMOL</label></td><td>2</td><td>5</td><td>10</td><td>Morning, Night</td></tr>
+<tr><td>2</td><td>AZEE 500 MG TAB </br><label style="font-size: 8px;">AZITHROMYCIN</label></td><td>1</td><td>3</td><td>3</td><td>Morning</td></tr>
+<tr><td>3</td><td>CIPLOX D DROPS </br><label style="font-size: 8px;">CIPROFLOXACIN HYDROCHLORIDE+DEXAMETHASONE</label></td><td>1</td><td>7</td><td>7</td><td>Evening</td></tr>
 </table>
 
-<!-- LAB & TEST -->
 <div class="section-title">Lab & Imaging Test</div>
 <table class="tableprint">
 <tr><th>#</th><th>Test</th><th>Category</th><th>Priority</th><th>Instructions</th><th>Date</th></tr>
@@ -845,32 +832,59 @@
 <tr><td>2</td><td>RFT</td><td>Blood</td><td>Urgent</td><td>-</td><td>10-11-2025</td></tr>
 <tr><td>3</td><td>USG-Abdomen</td><td>Imaging</td><td>Urgent</td><td>empty stomach fasting</td><td>10-11-2025</td></tr>
 </table>
+<div class="section-title">Doctor Notes</div>
+<textarea rows="3" class="textareaprint">
+Patient reports mild abdominal discomfort. No nausea or vomiting. Vitals stable.
+</textarea>
 
-<!-- ADMISSION -->
+<div class="section-title">Pain Assessment</div>
+<textarea rows="3" class="textareaprint">
+Pain Score: 4/10. Mild abdominal pain, non-radiating, increases after meals.
+</textarea>
+
+<div class="section-title">Plan of Care</div>
+<textarea rows="3" class="textareaprint">
+Start antacid medication. Advise increased water intake. Monitor symptoms for 24–48 hours.
+</textarea>
+
+<div class="section-title">Physical Activity</div>
+<textarea rows="3" class="textareaprint">
+Light walking advised. Avoid heavy lifting and strenuous activities for 2–3 days.
+</textarea>
+
+<div class="section-title">Diet Advice</div>
+<textarea rows="3" class="textareaprint">
+Take soft, non-spicy food. Avoid oily items. Eat small, frequent meals.
+</textarea>
 <div class="section-title">Admission Request</div>
 <textarea rows="3" class="textareaprint">Medical management recommended. No surgery required.</textarea>
 
-<!-- SUMMARY -->
 <div class="section-title">Visit Summary</div>
-<textarea rows="4" class="textareaprint">Patient advised rest, fluids, and medication adherence.</textarea>
+<textarea rows="4" class="textareaprint">Here is your visit summary generated by AI based on the information you provided.</textarea>
 
-<!-- FOLLOW-UP -->
-<div class="section-title">Follow-Up Appointment</div>
+<div class="section-title">Future Appointment</div>
 <table class="tableprint">
-<tr><th>#</th><th>Date</th><th>Doctor</th><th>Time & slot</th></tr>
-<tr><td>1</td><td>05-Oct-2025</td><td>Dr. Mehta</td><td>09:00 AM</td></tr>
+<tr><th>#</th><th>Type</th><th>Date</th><th>Speciality</th><th>Doctor</th><th>Time & slot</th></tr>
+<tr><td>1</td><th>Review</th><td>05-Oct-2025</td><td>Cardiology</td><td>Dr.ASHOKKUMAR</td><td>09:00 AM</td></tr>
+<tr><td>2</td><th>Cross Reference</th><td>06-Oct-2025</td><td>Endocrinology</td><td>Dr.GEETHALAKSHMI</td><td>09:00 AM</td></tr>
 </table>
 
-<!-- SIGNATURE -->
-<div class="footer-sign">
-    Dr. JAYARAJ A.K<br>
+<div style=" margin-top: 50px;
+    font-size: 15px;
+    font-weight: bold;
+    float:right;">
+    Dr.ASHOKKUMAR<br>
+    Cardiology<br>
     Consultant Physician
 </div>
+
 </div>
 </div>
+
     </section>
   </main>
-  <script src="jquery-3.6.4.min.js"></script>
-  <script src="script.js"></script>
+  <script src="/jquery-3.6.4.min.js"></script>
+  <script src="/script.js"></script>
+
 </body>
 </html>
