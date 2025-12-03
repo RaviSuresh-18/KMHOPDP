@@ -439,80 +439,146 @@ $("#today").text(new Date().toLocaleDateString());
 
 
 
- let recognition;
-  let activeTextBox = null;
+// --- Speech recognition helpers (drop into script.js) ---
+let recognition = null;
+let activeTextBox = null;   // current textarea DOM element
+let _isUserStopping = false; // to differentiate intentional stop vs auto end
 
-  function startRecording(textBoxId) {
-    // Stop existing recognition if active
-    if (recognition) recognition.stop();
+function isRecording() {
+  return !!recognition;
+}
+
+function startRecording(textBoxId) {
+  try {
+    // If already recording for same textbox, ignore.
+    if (isRecording()) {
+      const currentId = activeTextBox ? activeTextBox.id : null;
+      if (currentId === textBoxId) {
+        console.log('Already recording for', textBoxId);
+        return;
+      }
+      // otherwise stop previous recorder first
+      stopRecording();
+    }
 
     activeTextBox = document.getElementById(textBoxId);
+    if (!activeTextBox) {
+      console.warn('No element found for', textBoxId);
+      return;
+    }
 
-    if (!('webkitSpeechRecognition' in window)) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
       alert('Sorry, your browser does not support speech recognition.');
       return;
     }
 
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = true; // Keep listening until stopped manually
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = 'en-IN';
-
-    let finalTranscript = '';
+    recognition.lang = 'en-IN'; // as you had
 
     recognition.onstart = () => {
-      console.log(`🎙️ Listening... (${textBoxId})`);
-      activeTextBox.placeholder = "Listening... please speak clearly 🎤";
+      console.log('🎙️ recognition started for', textBoxId);
+      activeTextBox.placeholder = 'Listening... please speak clearly 🎤';
+      _isUserStopping = false;
     };
 
     recognition.onresult = (event) => {
+      // Rebuild the full transcript from current results to avoid duplication
+      let finalTranscript = '';
       let interimTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript + ' ';
-        } else {
-          interimTranscript += event.results[i][0].transcript;
-        }
+
+      for (let i = 0; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalTranscript += transcript + ' ';
+        else interimTranscript += transcript;
       }
-      activeTextBox.value = finalTranscript + interimTranscript;
+
+      // Keep existing typed text plus recognition text:
+      // If user had typed something previously, preserve it and append recognition text.
+      const typedPrefix = (activeTextBox.dataset.userText || '').trim();
+      const built = ((typedPrefix ? typedPrefix + ' ' : '') + (finalTranscript + interimTranscript)).trim();
+      activeTextBox.value = built;
     };
 
-    recognition.onerror = (event) => {
-      console.warn("Speech recognition error:", event.error);
+    // If user types manually while recording, store that prefix so recognition appends sensibly
+    const onInputSavePrefix = (e) => {
+      activeTextBox.dataset.userText = e.target.value || '';
+    };
+    activeTextBox.addEventListener('input', onInputSavePrefix);
 
+    recognition.onerror = (event) => {
+      console.warn('Speech recognition error:', event);
       switch (event.error) {
         case 'no-speech':
-          alert("⚠️ No speech detected. Please speak louder or closer to the mic.");
+          alert('⚠️ No speech detected. Please speak louder or closer to the mic.');
           break;
         case 'audio-capture':
-          alert("🎧 No microphone detected. Please connect one.");
+          alert('🎧 No microphone detected. Please connect one.');
           break;
         case 'not-allowed':
-          alert("🚫 Microphone permission denied. Allow access to use voice input.");
+          alert('🚫 Microphone permission denied. Allow access to use voice input.');
           break;
         default:
-          alert("⚠️ Speech recognition error: " + event.error);
+          // show only once-friendly details
+          console.warn('Speech error', event.error);
       }
     };
 
     recognition.onend = () => {
-      console.log("🎤 Recording stopped.");
-      activeTextBox.placeholder = "";
+      // If user intentionally stopped, we already cleaned up in stopRecording.
+      // Otherwise, just release and clear placeholder
+      console.log('🎤 recognition ended');
+      if (activeTextBox) activeTextBox.placeholder = '';
+      // remove the input listener
+      if (activeTextBox) activeTextBox.removeEventListener('input', onInputSavePrefix);
+      // make sure reference cleared
+      recognition = null;
+      activeTextBox = null;
     };
 
+    // start
     recognition.start();
+  } catch (err) {
+    console.error('startRecording error', err);
+    alert('Unable to start speech recognition: ' + err.message);
+    recognition = null;
+    activeTextBox = null;
   }
+}
 
-  function stopRecording() {
-    if (recognition) {
-      recognition.stop();
-      console.log("🛑 Recording manually stopped.");
+function stopRecording() {
+  if (!recognition) {
+    console.log('No active recognition to stop');
+    return;
+  }
+  try {
+    _isUserStopping = true;
+    // remove handlers to avoid stray events
+    recognition.onresult = null;
+    recognition.onerror = null;
+    recognition.onend = null;
+    try { recognition.stop(); } catch (e) { /* ignore */ }
+  } finally {
+    // ensure we clear references and placeholder
+    if (activeTextBox) {
+      activeTextBox.placeholder = '';
+      // clear temporary dataset.userText so next session starts fresh
+      delete activeTextBox.dataset.userText;
+      activeTextBox = null;
     }
+    recognition = null;
+    console.log('Recording stopped by user');
   }
+}
 
-  function clearText(textBoxId) {
-    document.getElementById(textBoxId).value = '';
-  }
+function clearText(textBoxId) {
+  const el = document.getElementById(textBoxId);
+  if (!el) return;
+  el.value = '';
+  delete el.dataset.userText;
+}
 prescriptionModal
 function openModal(id) {
   document.getElementById(id).style.display = "block";
