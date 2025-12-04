@@ -1,1151 +1,890 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OPDP — Workflow UI</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="app-wrap">
+    <section id="loginView" class="card center-card">
+      <h2>      <div style="display: flex;text-align: center;align-items: center;justify-content: center;">
+         <div class="header-right"><img src="./logo/drkmh.jpg" alt="KMH" class="logo" /></div>
+       <div class="user-role" style="    font-size: large;    margin-left: 10px;    font-weight: bold;">KMH — Login</div>
+      </div></h2>
+      <input style="width:100%;padding:18px;border-radius:8px;border:1px solid var(--border);font-size:18px;margin-bottom: 10px;" id="username" type="text" maxlength="50" placeholder="Username" />
+      <input style="width:100%;padding:18px;border-radius:8px;border:1px solid var(--border);font-size:18px;margin-bottom: 10px;" id="password" type="password" maxlength="50" placeholder="Password" />
+      <button id="btnLogin" class="btn primary">Login</button>              
 
-$(document).ready(function () {
+    </section>
 
-    
-  const loginView = $("#loginView"),
-        patientsView = $("#patientsView"),
-        assessmentView = $("#assessmentView"),
-        topHeader = $("#topHeader"),
-        headerUsername = $("#headerUsername");
+    <header id="topHeader" class="site-header hidden">
+      <div class="header-left">
+        <div class="avatar">S</div>
+        <div class="user-info">
+          <div id="headerUsername" class="user-name"></div>         
+        </div>
+      </div>
+      <div style="display: flex;text-align: center;align-items: center;">
+         <div class="header-right"><img src="./logo/drkmh.jpg" alt="KMH" class="logo" /></div>
+       <div class="user-role" style="    font-size: large;    margin-left: 10px;    font-weight: bold;">KMH — Internals</div>
+      </div>
+     
+      <div class="header-actions"><button id="btnLogout" class="btn">Logout</button></div>
+    </header>
 
-  $("#btnLogin").on("click", function () {
-    if($("#username").val() == '' || $("#password").val() == '' ){
-      alert('Enter User name and password')
-return
-    }
-    const name = $("#username").val().trim() || "User";
-    loginView.addClass("hidden");
-    patientsView.removeClass("hidden");
-    topHeader.removeClass("hidden");
-    headerUsername.text(name);
-  });
+    <section id="patientsView" class="card hidden">
+      <div class="patients-top">
+        <div>
+          <div class="meta-table">
+            <div style="justify-content: space-between;">
+               <div id="time-display" style="align-items: center;">00:00</div>
+               <div class="button-group" style="align-items: center;"> 
+                <button id="start-btn" >Start OP</button>
 
-  $("#btnLogout").on("click", function () {
-    topHeader.addClass("hidden");
-    patientsView.addClass("hidden");
-    assessmentView.addClass("hidden");
-    loginView.removeClass("hidden");
-  });
-
-  // --- PATIENT LIST ---
-  const patients = [
-    { sl: 1, SlotTime: "08:00 Am (I)", uhid: 48554, name: "Sathish", bill: 34445 },
-    { sl: 2, SlotTime: "08:10 Am (p)", uhid: 63254, name: "Sugumar", bill: 36521 },
-    { sl: 3, SlotTime: "11:10 Am (p)", uhid: 45468, name: "Ramesh", bill: 36542 },
-    { sl: 4, SlotTime: "03:10 pm (p)", uhid: 25468, name: "Devi", bill: 36542 },
-    { sl: 5, SlotTime: "04:10 pm (p)", uhid: 484918, name: "Tamil", bill: 36582 }
-  ];
-
-  function renderPatients() {
-    const tbody = $("#patientsTbody").empty();
-    $.each(patients, function (_, p) {
-      const tr = $(`
-        <tr>
-          <td>${p.sl}</td>
-          <td>${p.SlotTime}</td>
-          <td>${p.uhid}</td>
-          <td>${p.name}</td>
-          <td>${p.bill} <img src="./Images/icn_edit.png" id="editbillbtn" onclick="showeditpopup('billlpopupBox')" class="editIcon" style="cursor:pointer;" /></td>
-          <td>
-            <div class="actions-row" style="display: flex;align-items: center;">
-              <button class="btn ghost Arrbtn">Arrived</button>
-              <img src="./Images/tick.png" class="arrivedtick" style="display:none;" />
-              <button class="btn ghost assessBtn">Assess</button>
-              <img src="./Images/ico_print.png" onclick="fnCallPrint(this,'finalprint',1)" /> 
-
+                <img src="./Images/pause.png" id="pause-btn" style="display:none; width: 20px;" />  
+                <img src="./Images/play-buttton.png" id="resume-btn" style="display:none;width: 20px;"/>  
+                <img src="./Images/stop-button.png"id="stop-btn"style="display:none;width: 20px;" /> 
+                <img src="./Images/icn_add_user.png" />  
+                <img src="./Images/refresh_icon_n.png" /> 
+                <img src="./Images/ico_print.png" /> 
+                 
+                </div>
             </div>
-          </td>
+            <div style="display: flex;justify-content: space-between;align-items: center;"><span><strong>Doctor Name</strong><span style="margin-left: 10px;">Dr.ASHOKKUMAR</span></span><div><input type="button" value="Edit" class="btn ghost" id="editBtn" onclick="showeditpopup('popupBox')"></div></div>
+            <div><strong>Date & Time</strong><span>27-Sep-2025 08:00 AM - 05:00 PM</span></div>
+            <div><strong>Nurse</strong><span>M.Sathya</span></div>
+            <div><strong>Room No</strong><span>304</span></div>
+            <!-- <div>
+                <img src="./Images/icn_add_user.png" />  
+                <img src="./Images/refresh_icon_n.png" /> 
+                <img src="./Images/ico_print.png" /> 
+            </div> -->
+          </div>
+        </div>
+
+ <div id="popupBox" class="popup">
+  <div class="popup-content">
+    <span class="close"onclick="closeeditpopup('popupBox')">&times;</span>
+    <h2>Edit Details</h2>
+
+    <table class="popup-table">
+      <tr>
+        <td class="label">Nurse</td>
+        <td>
+          <select id="nurseSelect">
+            <option>Select Nurse</option>
+            <option>Riya</option>
+            <option>Kavitha</option>
+            <option>Meena</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Room No</td>
+        <td>
+          <select id="roomSelect">
+            <option>Select Room No</option>
+            <option>101</option>
+            <option>102</option>
+            <option>103</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Status</td>
+        <td>
+          <select id="statusSelect">
+            <option>Select Status</option>
+            <option>Close Op</option>
+            <option>Dealocate OP</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+
+    <div class="popup-actions">
+      <button id="Update">Update</button>
+    </div>
+  </div>
+</div>
+ <div id="billlpopupBox" class="popupp">
+  <div class="popup-content">
+    <span class="close"id="billclose" onclick="closeeditpopup('billlpopupBox')">&times;</span>
+    <h2>Bill Details</h2>
+
+    <table class="popup-table">
+      <tr>
+        <td class="label">Bill NO</td>
+        <td>
+          <input id="bill" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="7">
+        </td>
+      </tr>
+    </table>
+    <div class="popup-actions">
+      <button id="Updatebill">Update</button>
+    </div>
+  </div>
+</div>
+</div>
+
+      </div>
+      <table class="table list-table">
+        <thead>
+          <tr style="width: 100%;"><th style="width: 5%;">Sl.No</th><th style="width: 15%;">Slot</th><th style="width: 10%;">UHID</th><th style="width: 30%;">Patient Name</th><th style="width: 10%;">Bill No</th><th style="width: 20%;">Actions</th></tr>
+        </thead>
+        <tbody id="patientsTbody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <section id="assessmentView" class="card hidden">
+      <div class="assessment-top">
+        <button id="backToPatients" class="btn ghost">← Back</button>
+        <h3 class="centered">Patient Detail</h3>
+         
+
+
+      </div>
+      <div style="display: flex;justify-content: space-between;">
+        <div>
+        <button id="CheckIn" onclick="Startcheckin()" class="btn ghost">Check In</button>
+         <button id="CheckOut" style="display: none;" onclick="saveandcheckout()" class="btn ghost">Check Out</button>
+        </div>
+       
+         <div id="timeshower"></div>
+      </div>
+
+      <div class="patient-details">
+        <table class="table compact">
+          <tbody>
+            <tr><td class="label"><b>Name</b></td><td id="detailName">SATHISH</td><td class="label"><b>UHID</b></td><td id="detailUHID">25642</td></tr>
+            <tr><td class="label"><b>DOB</b></td><td id="detailDOB">06-Aug-2001</td><td class="label"><b>Age</b></td><td id="detailAge">25</td></tr>
+            <tr><td class="label"><b>Gender</b></td><td id="detailGender">MALE</td><td class="label"><b>Address</b></td><td id="detailAddr">NO:3798 , PALIKARANI , CHENNAI</td></tr>
+            <tr><td class="label"><b>Bill No</b></td><td id="detailBill">28546</td><td class="label"><b>Reffered Consultant</b></td><td id="detailPrebook">-</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-target="triage">General Assessment</button>
+        <button class="tab" data-target="clinical">Prescriptions & Advises</button>
+        <button class="tab" data-target="diagnosis">Notes</button>
+        <button class="tab" data-target="prescription">Previous History</button>
+        <button class="tab" data-target="lab">Admission Request</button>
+        <button class="tab" data-target="pharmacy">Visit Summary</button>
+        <button class="tab" data-target="billing">Follow-up</button>
+      </nav>
+
+      <div class="tabcontent" id="triage">
+        <h4>Initial Vitals</h4>
+        <div class="vitals" style="display: flex; align-items: center;">
+          <label><b>PR</b> <input id="pr" type="text" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" maxlength="3" style="width: 40px;"> Bpm</label>
+          <label><b>RR</b> <input id="rr" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> /Min</label>
+          <label><b>BP Systolic</b> <input id="bps" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> Mm</label>
+          <label><b>BP Diastolic</b> <input id="bpd" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> Hg</label>
+          <label><b>Spo2</b> <input id="spo" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> %</label>
+          <label><b>Height</b> <input id="height" type="text" inputmode="numeric" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3"style="width: 40px;"> Cm</label>
+          <label><b>Weight</b> <input id="weight" type="text" inputmode="numeric" maxlength="3"oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="3" style="width: 40px;"> Kg</label>
+        </div>
+
+        <label>Chief Complaints</label><textarea id="chief" rows="4"></textarea><div class="controls">
+  <button onclick="startRecording('chief')" id="recordChief">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('chief')">❌ Clear</button>
+</div>
+        <label>History</label><textarea id="history" rows="4"></textarea><div class="controls">
+ <button onclick="startRecording('history')" id="recordHistory">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('history')">❌ Clear</button>
+</div>
+        <label>Examination</label><textarea id="examination" rows="4"></textarea><div class="controls">
+<button onclick="startRecording('examination')" id="recordExam">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('examination')">❌ Clear</button>
+</div>
+        <label>Allergies / intolerances</label><textarea id="Allergies" rows="4"></textarea><div class="controls">
+<button onclick="startRecording('Allergies')" id="Allergies">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('Allergies')">❌ Clear</button>
+</div>
+        <div class="icd-section">
+          <label>ICD Code</label>
+          <div class="icd-row"><input id="icdInput" placeholder="Enter ICD code" style="height: 30px;width: 30%;" />
+            <button id="addIcd" class="btn" style=" color: white;background: black;font-size: revert-layer;margin-left: 10px;">Add</button></div>
+          <table id="icdTable" class="table">
+            <thead><tr style="width: 100%;"><th style="width: 30%;">ICD Code</th><th style="width: 65%;">Definition</th><th style="width: 5%;"></th></tr></thead>
+            <tbody>
+ <tr>
+      <td>G10</td>
+      <td>I25.111</td>
+       <td> <img src="./Images/icn_trash.png" /></td>
+    </tr>
+    <tr>
+      <td>Huntington's disease</td>
+      <td>atherosclerotic heart disease</td>
+      <td><img src="./Images/icn_trash.png" /></td>
+    </tr>
+            </tbody>
+          </table>
+        </div>
+                <div class="icd-section">
+          <label>Existing ICD Code</label>
+          <table id="icdTable" class="table">
+            <thead><tr style="width: 100%;"><th style="width: 30%;">ICD Code</th><th style="width: 65%;">Definition</th><th style="width: 5%;"></th></tr></thead>
+            <tbody>
+ <tr>
+      <tr>
+      <td>A37.81</td>
+      <td>whooping cough</td>
+       <td> <img src="./Images/icn_trash.png" /></td>
+    </tr>
+    <tr>
+      <td>F32.3</td>
+      <td>Major depressive disorder</td>
+      <td> <img src="./Images/icn_trash.png" /></td>
+    </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="tabcontent hidden" id="clinical">
+        <div class="prescription-cards">
+          <section class="card small">
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <button id="btnAddMed" class="btn ghost">+ Add Medicine</button>
+               <button id="btnviewpres" onclick="openModal('prescriptionModal')" class="btn ghost">View Previous Prescription</button>
+            </div>
+            <table id="rxTable" class="table compact">
+              <thead><tr style="width:100%;"><th style="width:55%;">Medicine</th><th style="width:15% ;">Frequency</th><th style="width:5%;">Days</th><th style="width:5%;">Quantity</th><th style="width:15% ;">Timing</th><th style="width:5%;">Action</th></tr></thead>
+              <tbody id="tbodyMed"></tbody>
+            </table>
+            <p class="note">Tip: Quantity auto-calculates as frequency × days.</p>
+          </section>
+
+          <section class="card small" >
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <button id="btnAddLab" class="btn ghost">+ Add Test</button>
+             <button id="btnviewtest" class="btn ghost" onclick="openModal('prescriptiontestModal')">View Previous Test</button>
+            </div>
+            <table id="labTable" class="table compact">
+              <thead><tr style="width: 100%;"><th style="width: 45%;">Test</th><th style="width: 10%;">Category</th><th style="width:10% ;">Priority</th><th style="width:20% ;">Instructions</th><th style="width: 10%;">Date</th><th style="width: 5%;">Action</th></tr></thead>
+              <tbody id="tbodyLab"></tbody>
+            </table>
+          </section>
+
+          <section class="card small">
+            <div class="card-header" style="display: flex;justify-content: space-between;">
+              <button id="btnAddRD" class="btn ghost">+ Add Advice Consultant</button>
+              <!-- <button id="btnviewref" class="btn ghost">View Previous Reference</button> -->
+            </div>
+            <table id="RDTable" class="table compact">
+              <thead><tr style="width:100%;"><th style="width:20%;">Speciality</th><th style="width:30%;">Doctor</th><th style="width: 10%;">Priority</th><th style="width: 30%;">Instructions</th><th style="width: 5%;">Date</th><th style="width: 5%;">Action</th></tr></thead>
+              <tbody id="tbodyRD"></tbody>
+            </table>
+            <div class="footer">Date: <span id="today"></span></div>
+          </section>
+        </div>
+      </div>
+
+      <div class="tabcontent hidden" id="diagnosis">
+        <label>Doctor Notes</label><textarea id="DoctorNotes" rows="4"></textarea>
+<div class="controls">
+<button onclick="startRecording('DoctorNotes')" id="recordDoctorNotes">🎙 Record</button>
+  <button onclick="stopRecording()"style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('DoctorNotes')">❌ Clear</button>
+</div>
+        <label>Pain Assessment</label><textarea id="PainAssessment" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('PainAssessment')" id="recordPainAssessment">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('PainAssessment')">❌ Clear</button>
+</div>
+        <label>Plan of Care</label><textarea id="POC" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('POC')" id="recordPOC">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('POC')">❌ Clear</button>
+</div>
+        <label>Physicial Activity</label><textarea id="PhysicialActivity" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('PhysicialActivity')" id="PhysicialActivity">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('PhysicialActivity')">❌ Clear</button>
+</div>
+        <label>Diet Advice</label><textarea id="DietAdvice" rows="3"></textarea>
+<div class="controls">
+<button onclick="startRecording('DietAdvice')" id="recordPainAssessment">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('DietAdvice')">❌ Clear</button>
+</div>
+
+      </div>
+
+      <div class="tabcontent hidden" id="prescription">
+        <h4>Past Medical History</h4>
+       <div class="filters">
+  <div class="filter-item">
+    <span>From</span>
+    <input id="filterFromDate" style="width: 70%;" type="date">
+  </div>
+
+  <div class="filter-item">
+    <span>To</span>
+    <input id="filterToDate" style="width: 80%;" type="date">
+  </div>
+
+  <div class="filter-item">
+    <span>Speciality</span>
+    <select id="filterSpec">
+      <option value="">All</option>
+      <option>Cardiology</option>
+      <option>Orthopedics</option>
+      <option>General Medicine</option>
+      <option>Dermatology</option>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <span>Visit Type</span>
+    <select id="filterVisit">
+      <option value="">All</option>
+      <option>OP</option>
+      <option>IP</option>
+      <option>Emergency</option>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <span>Doctor</span>
+    <select id="filterDoctor">
+      <option value="">All</option>
+      <option>Dr. Mehta</option>
+      <option>Dr. Sharma</option>
+      <option>Dr. Rao</option>
+      <option>Dr. Iyer</option>
+    </select>
+  </div>
+
+  <div class="filter-actions">
+    <button class="btn ghost" id="applyFilters">Apply</button>
+    <button class="btn ghost" id="resetFilters">Reset</button>
+  </div>
+</div>
+
+        <table id="historyTable" class="table">
+          <thead><tr style="width: 100%;"><th style="width: 10%;" >Date</th><th style="width: 15%;">Speciality</th><th style="width: 20%;">Diagnosis</th><th style="width: 10%;">Visit Type</th><th style="width: 35%;">Doctor</th><th style="width: 10%;">Action</th></tr></thead>
+          <tbody>
+            <tr><td>2025-09-15</td><td>Cardiology</td><td>Hypertension</td><td><span class="pill opd">OP</span></td><td>Dr. Mehta</td><td><button class="btn ghost" data-date="2025-09-15">Open</button></td></tr>
+            <tr><td>2025-08-02</td><td>Orthopedics</td><td>Knee Pain</td><td><span class="pill ipd">IP</span></td><td>Dr. Sharma</td><td><button class="btn ghost" data-date="2025-08-02">Open</button></td></tr>
+            <tr><td>2025-07-10</td><td>Dermatology</td><td>Eczema</td><td><span class="pill opd">OP</span></td><td>Dr. Rao</td><td><button class="btn ghost" data-date="2025-07-10">Open</button></td></tr>
+            <tr><td>2025-06-22</td><td>General Medicine</td><td>Fever</td><td><span class="pill opd">OP</span></td><td>Dr. Iyer</td><td><button class="btn ghost" data-date="2025-06-22">Open</button></td></tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="tabcontent hidden" id="lab">
+        <h4>Admission Advice</h4>
+        <label>Advice Type <select id="adviceType"><option value="Select">-- Select --</option><option value="NP">NO procedure</option><option value="MedicalManagement">Medical Management</option><option value="Surgery">Surgery / Procedure</option><option value="both">Both</option></select></label>
+        <label id="surgeryLabel" class="hidden">Type of Surgery / Procedure <input id="surgeryType" style="width: 50%;"></label>
+        <label>Doctor's Advice <textarea id="doctorAdvice" rows="6"></textarea></label>
+        <div class="controls">
+<button onclick="startRecording('doctorAdvice')" id="recordsurgeryType">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('doctorAdvice')">❌ Clear</button>
+</div>
+
+      </div>
+
+      <div class="tabcontent hidden" id="pharmacy">
+        <div id="summaryBox" class="summary"><h4>Visit Summary</h4><textarea id="summaryTextarea" rows="8"></textarea></div>
+        <div class="controls" style="">
+<button onclick="startRecording('summaryTextarea')" id="recordsummaryTextarea">🎙 Record</button>
+  <button onclick="stopRecording()" style="display:none;">⏹ Stop</button>
+  <button onclick="clearText('summaryTextarea')">❌ Clear</button>
+</div>
+     <div style="justify-content: center;"> <button 
+  id="generateSummary" 
+  class="btn ghost" 
+  style="
+    margin-top: 20px; 
+    background: linear-gradient(135deg, #0078ff, #00d4ff);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  "
+  onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 15px rgba(0,0,0,0.3)';"
+  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.2)';"
+>
+  🤖 Generate Summary with AI
+</button></div>  
+
+      </div>
+
+      <div class="tabcontent hidden" id="billing">
+        <div class="">
+           <h4 style="margin-top: 10px;">Book Appointments</h4>
+<table id="appointmentTable" class="form-table" border="1" cellpadding="8" cellspacing="0">
+
+  <tr>
+    <th>Date</th>
+    <td><input id="date" type="date" required></td>
+  </tr>
+  <tr>
+    <th>Speciality</th>
+    <td>
+      <select id="speciality" required>
+        <option value="">--Select--</option>
+        <option>Cardiology</option>
+        <option>Orthopedics</option>
+        <option>Dermatology</option>
+        <option>General Medicine</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Doctor</th>
+    <td>
+      <select id="doctor" required>
+        <option>Dr.C.v.Pillai</option>
+        <option>Dr.Vidhiyachaya</option>
+        <option>Dr.Bharath</option>
+        <option>Dr.Nagalakshmi</option>
+        <option>Dr.Devi</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Schedule</th>
+    <td>
+      <select id="schedule">
+        <option>8am - 1pm</option>
+        <option>2pm - 4pm</option>
+        <option>Evening</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <th>Slot</th>
+    <td>
+      <select id="slot">
+        <option>09:00 AM</option>
+        <option>09:30 AM</option>
+        <option>10:00 AM</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align:center;">
+      <button type="button" class="btn primary" id="bookBtn">Book</button>
+      <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+    </td>
+  </tr>
+</table>
+
+          <div class="upcoming">
+            <h4>Upcoming Appointments</h4>
+            <table id="appointmentsTable" class="table compact">
+              <thead><tr><th>Date</th><th>Speciality</th><th>Doctor</th><th>Schedule</th><th>Slot</th></tr></thead>
+              <tbody id="appointmentsTbody">
+                <tr><td>2025-10-05</td><td>Cardiology</td><td>Dr. Mehta</td><td>8am - 1pm</td><td>09:00 AM</td></tr>
+                <tr><td>2025-10-05</td><td>Orthopedics</td><td>Dr. Sharma</td><td>8am - 1pm</td><td>12:00 PM</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <div class="tab-navigation" style="    text-align: center;    margin-top: 10px;">
+  <button id="prevBtn" class="btn ghost">Previous</button>
+  <button id="saveNextBtn" class="btn primary">Save & Next</button>
+  <button class="btn ghost" style="display:  none;" id="printbtn" onclick="fnCallPrint(this,'finalprint')">🖨 Print Prescription</button>
+</div>
+
+<div id="prescriptionModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Previous Prescriptions</h3>
+      <span class="close" onclick="closeModal('prescriptionModal')">&times;</span>
+    </div>
+
+    <table id="previousList">
+      <thead>
+        <tr>
+          <th>Consultation Date</th>
+          <th style="font-weight: lighter;">10-11-2025</th>
+          <th>Docter Name</th>
+          <th style="font-weight: lighter;" colspan="99">Dr.JAYARAJ.A.K</th>
         </tr>
-      `);
-      tr.find(".Arrbtn").on("click", function () {
-        $(this).hide().siblings(".arrivedtick").show();
-      });
-      tr.find(".assessBtn").on("click", function () {
-        openAssessment(p);
-      });
-      tbody.append(tr);
-    });
-  }
-  renderPatients();
+        <tr>
+          <th>Select</th>
+          <th>Medicine</th>
+          <th>Frequency</th>
+          <th>Days</th>
+          <th>Quantity</th>
+          <th>Timing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example previous prescriptions -->
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Paracetamol 500mg</td>
+          <td>2</td>
+          <td>5</td>
+          <td>10</td>
+          <td>Morning, Night</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Azithromycin 250mg</td>
+          <td>1</td>
+          <td>3</td>
+          <td>3</td>
+          <td>Morning</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Vitamin C</td>
+          <td>1</td>
+          <td>7</td>
+          <td>7</td>
+          <td>Evening</td>
+        </tr>
+      </tbody>
+    </table>
+ <table id="previousList">
+      <thead>
+        <tr>
+          <th>Consultation Date</th>
+          <th style="font-weight: lighter;">11-11-2025</th>
+          <th>Docter Name</th>
+          <th style="font-weight: lighter;" colspan="99">Dr.JAYARAJ.A.K</th>
+        </tr>
+        <tr>
+          <th>Select</th>
+          <th>Medicine</th>
+          <th>Frequency</th>
+          <th>Days</th>
+          <th>Quantity</th>
+          <th>Timing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example previous prescriptions -->
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Levothyroxine</td>
+          <td>2</td>
+          <td>5</td>
+          <td>10</td>
+          <td>Morning</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Azithromycin 250mg</td>
+          <td>1</td>
+          <td>3</td>
+          <td>3</td>
+          <td>Morning,Night</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>Atorvastatin</td>
+          <td>1</td>
+          <td>7</td>
+          <td>7</td>
+          <td>Evening</td>
+        </tr>
+      </tbody>
+    </table>
 
-  function openAssessment(patient) {
-    patientsView.addClass("hidden");
-    assessmentView.removeClass("hidden");
-  }
-
-  $("#backToPatients").on("click", function () {
-    assessmentView.addClass("hidden");
-    patientsView.removeClass("hidden");
-  });
-});
-  // --- TABS NAVIGATION ---
-  const tabs = $(".tabs .tab");
-  const contents = $(".tabcontent");
-
-  $(".tab").on("click", function () {
-    const target = $(this).data("target");
-    tabs.removeClass("active");
-    $(this).addClass("active");
-    contents.addClass("hidden");
-    $("#" + target).removeClass("hidden");
-  });
-
-  // Save & Next / Previous
-  $("#saveNextBtn").on("click", function () {
-    validateSaveDetail();
-    let currentIndex = tabs.index($(".tab.active"));
-    if (currentIndex < tabs.length - 1) {
-      tabs.removeClass("active").eq(currentIndex + 1).addClass("active");
-      contents.addClass("hidden").eq(currentIndex + 1).removeClass("hidden");
-    }
-     if (currentIndex == tabs.length - 1) {$('#printbtn').show()}
-     else{$('#printbtn').hide()}
-  });
-
-  $("#prevBtn").on("click", function () {
-    let currentIndex = tabs.index($(".tab.active"));
-    if (currentIndex > 0) {
-      $('#printbtn').hide()
-      tabs.removeClass("active").eq(currentIndex - 1).addClass("active");
-      contents.addClass("hidden").eq(currentIndex - 1).removeClass("hidden");
-    }
-  });
-
-
-  // --- VALIDATION ---
-  let alertarr = [];
-
-  function validateSaveDetail() {
-    let success = true;
-    alertarr = [];
-
-    const active = $(".tab.active").data("target");
-
-    if (active === "triage") {
-      if ($("#pr").val() === "") alertarr.push("Enter PR value /value must be > 0 ");
-      if ($("#rr").val() === "") alertarr.push("Enter RR value /value must be > 0 ");
-      if ($("#bps").val() === "" || $("#bpd").val() === "") alertarr.push("Enter BP values");
-      if ($("#spo").val() === "") alertarr.push("Enter Spo2 value");
-      if ($("#chief").val() === "") alertarr.push("Enter Chief Complaints");
-      if ($("#history").val() === "") alertarr.push("Enter History");
-      if ($("#examination").val() === "") alertarr.push("Enter Examination");
-    }
-
-    if (active === "diagnosis") {
-      if ($("#DoctorNotes").val() === "") alertarr.push("Enter Doctor Notes");
-      if ($("#PainAssessment").val() === "") alertarr.push("Enter Pain Assessment");
-      if ($("#POC").val() === "") alertarr.push("Enter Plan Of Cate");
-      if ($("#PhysicialActivity").val() === "") alertarr.push("Enter Physicial Activity");
-            if ($("#DietAdvice").val() === "") alertarr.push("Enter Diet Advice");
-
-    }
-
-    if (active === "lab") {
-      const advice = $("#adviceType :selected").val();
-      if (advice === "Select") alertarr.push("Select Admission Type");
-      if (advice === "MedicalManagement" || advice === "Surgery") {
-        if ($("#doctorAdvice").val() === "") alertarr.push("Enter Doctor Advice");
-      }
-    }
-
-    if (active === "pharmacy") {
-      if ($("#summaryTextarea").val() === "") alertarr.push("Enter visit summary");
-    }
-
-    if (alertarr.length > 0) {
-      let msg = "";
-      $.each(alertarr, function (i, v) {
-        msg += `${i + 1}. ${v}\n`;
-      });
-      alert(msg);
-      success = false;
-    }
-    return success;
-  }
-
-  // --- TIMER ---
-  let elapsedTime = 0;
-  let timerInterval = null;
-  let isPaused = false;
-  let isRunning = false;
-
-  function updateDisplay() {
-    const hours = String(Math.floor(elapsedTime / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((elapsedTime % 3600) / 60)).padStart(2, "0");
-    const seconds = String(elapsedTime % 60).padStart(2, "0");
-    $("#time-display").text(`${hours}:${minutes}:${seconds}`);
-  }
-
-  $("#start-btn").on("click", function () {
-    if (isRunning) {
-      if (!confirm("Timer already running. Restart?")) return;
-      elapsedTime = 0;
-    } else if (!confirm("Start the timer?")) return;
-
-    isRunning = true;
-    isPaused = false;
-    $("#start-btn").hide();
-    $("#pause-btn, #stop-btn").show();
-    $("#resume-btn").hide();
-    $("#time-display").removeClass("blink");
-
-    timerInterval = setInterval(() => {
-      if (!isPaused) {
-        elapsedTime++;
-        updateDisplay();
-      }
-    }, 1000);
-  });
-
-  $("#pause-btn").on("click", function () {
-    if (!confirm("Pause the timer?")) return;
-    isPaused = true;
-    $("#pause-btn").hide();
-    $("#resume-btn").show();
-    $("#time-display").addClass("blink");
-  });
-
-  $("#resume-btn").on("click", function () {
-    if (!confirm("Resume the timer?")) return;
-    isPaused = false;
-    $("#resume-btn").hide();
-    $("#pause-btn").show();
-    $("#time-display").removeClass("blink");
-  });
-
-  $("#stop-btn").on("click", function () {
-    if (!confirm("Stop the timer?")) return;
-    clearInterval(timerInterval);
-    $("#pause-btn, #resume-btn, #stop-btn").hide();
-    $("#start-btn").show();
-    $("#time-display").removeClass("blink");
-  });
-
-  updateDisplay();
-
-  // --- CHECKIN / CHECKOUT ---
-  function startcheckintimer() {
-    $("#CheckIn").hide();
-    $("#CheckOut").show();
-    const hours = String(Math.floor(elapsedTime / 3600)).padStart(2, "0");
-    const minutes = String(Math.floor((elapsedTime % 3600) / 60)).padStart(2, "0");
-    const seconds = String(elapsedTime % 60).padStart(2, "0");
-    $("#timeshower").text(`${hours}:${minutes}:${seconds}`);
-  }
-
-  let timerIntervall = null;
-  window.Startcheckin = function () {
-    try {
-      timerIntervall = setInterval(() => {
-        if (!isPaused) {
-          elapsedTime++;
-          startcheckintimer();
-        }
-      }, 1000);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  window.saveandcheckout = function () {
-    if (validateSaveDetail()) {
-      alert("Patient Checkout Successfully");
-      clearInterval(timerIntervall);
-    }
-  };
+    <div style="text-align:right;">
+      <button onclick="importSelected()">Import Selected</button>
+      <button onclick="closeModal('prescriptionModal')">Cancel</button>
+    </div>
+  </div>
+</div>
 
 
-     function showeditpopup(idname) { $(`#${idname}`).fadeIn(200); }
-        function closeeditpopup(idname) { $(`#${idname}`).fadeOut(200); }
-        // ---------- Prescriptions — Medicine ----------
-const freqMap = { 'OD':1,'BD':2,'TDS':3,'QID':4,'HS':1,'SOS':1 };
-const freqs = ['OD','BD','TDS','QID','HS','SOS'];
+<div id="prescriptiontestModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Previous Prescriptions</h3>
+      <span class="close" onclick="closeModal('prescriptionModal')">&times;</span>
+    </div>
 
-$("#btnAddMed").on("click", function() {
-  createMedRow();
-});
+<table id="previoustestList">
+      <thead>
+        <tr>
+          <th>Consultation Date</th>
+          <th style="font-weight: lighter;">11-11-2025</th>
+          <th>Docter Name</th>
+          <th style="font-weight: lighter;" colspan="99">Dr.JAYARAJ.A.K</th>
+        </tr>
+        <tr>
+          <th>Select</th>
+          <th>Test</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Instructions</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example previous prescriptions -->
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>CBC</td>
+          <td>Blood</td>
+          <td>Urgent</td>
+          <td>-</td>
+          <td>10-11-2025</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>RFT</td>
+       <td>Blood</td>
+          <td>Urgent</td>
+          <td>-</td>
+          <td>10-11-2025</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" class="prescriptionItem"></td>
+          <td>USG-Abdomen</td>
+       <td>Imaging</td>
+          <td>Urgent</td>
+          <td>empty stomach fasting </td>
+          <td>10-11-2025</td>
+        </tr>
+      </tbody>
+    </table>
 
-function createMedRow(data = {}) {
-  const tr = $(`
-    <tr>
-      <td><input list="meds" class="medname" style="width:100%" placeholder="Medicine"></td>
-      <td><select class="freq" style="width:100%">${freqs.map(f=>`<option>${f}</option>`).join('')}</select></td>
-      <td><input class="small days" style="width:100%" type="text" min="1"></td>
-      <td><input class="qty" type="text" style="width:100%"></td>
-      <td>
-        <select class="timing" style="width:100%">
-          <option>After Food</option>
-          <option>Before Food</option>
-        </select>
-      </td>
-      <td><button class="btn ghost remove">Remove</button></td>
-    </tr>
-  `);
+    <div style="text-align:right;">
+      <button onclick="importSelected()">Import Selected</button>
+      <button onclick="closeModal('prescriptiontestModal')">Cancel</button>
+    </div>
+  </div>
+</div>
 
-  tr.find('.medname').val(data.name || '');
-  tr.find('.freq').val(data.frequency || 'OD');
-  tr.find('.days').val((data.days ?? 1));
-  tr.find('.qty').val(data.quantity || '');
-  tr.find('.timing').val(data.timing || 'After Food');
+<div id="finalprint" style="display:none;">
 
-  const freqEl = tr.find('.freq');
-  const daysEl = tr.find('.days');
-  const qtyEl  = tr.find('.qty');
+<style>
 
-  function recalc() {
-    const f = freqEl.val() || 'OD';
-    const d = Number(daysEl.val()) || 1;
-    if (!qtyEl.data('manual')) qtyEl.val((freqMap[f] || 1) * d);
-  }
 
-  tr.on('click', '.remove', () => tr.remove());
-  freqEl.on('change', recalc);
-  daysEl.on('input', recalc);
-  qtyEl.on('input', () => qtyEl.data('manual', true));
 
-  $("#tbodyMed").append(tr);
-  recalc();
+.bodyprint {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000;
+    background: #fff;
+    margin: 0;
+    padding: 2mm;
 }
 
-// ---------- Lab Tests ----------
-const categories = ['Blood','Urine','Imaging','Pathology','Cardiology','Other'];
-const priority = ['Routine','Urgent','STAT'];
 
-$("#btnAddLab").on("click", function() {
-  createLabRow();
-});
 
-function createLabRow(data = {}) {
-  const tr = $(`
-    <tr>
-      <td><input list="tests" class="testname" style="width:100%" placeholder="Test"></td>
-      <td><select class="category" style="width:100%">${categories.map(c=>`<option>${c}</option>`).join('')}</select></td>
-      <td><select class="priority" style="width:100%">${priority.map(p=>`<option>${p}</option>`).join('')}</select></td>
-      <td><input class="instructions" style="width:100%" type="text"></td>
-      <td><input type="date" class="date" style="width:100%"></td>
-      <td><button class="btn ghost remove">Remove</button></td>
-    </tr>
-  `);
-
-  // Set values safely via jQuery
-  tr.find('.testname').val(data.name || '');
-  tr.find('.category').val(data.category || 'Blood');
-  tr.find('.priority').val(data.priority || 'Routine');
-  tr.find('.instructions').val(data.instructions || '');
-  tr.find('.date').val(data.date || new Date().toISOString().substring(0,10));
-
-  tr.on("click", ".remove", function() {
-    tr.remove();
-  });
-
-  $("#tbodyLab").append(tr);
+.title {
+    font-size: 22px;
+    font-weight: bold;
+}
+.sub-title {
+    font-size: 14px;
+    margin-top: -6px;
 }
 
-// Example seed row
-createLabRow({
-  name: 'Complete Blood Count (CBC)',
-  category: 'Blood',
-  priority: 'Routine',
-  instructions: 'No fasting needed'
-});
 
 
-// ---------- Referral Doctors ----------
-const RDpriority = ['Routine','Urgent','STAT'];
-const RDspeciality = ['Emergency medicine','Pediatrics','Cardiology','Family medicine','Pathology','Psychiatry','Dermatology','Gastroenterology','Hematology'];
-const RDnames = ['DR.PILLAI C.V.','DR.R VIDYACHAYA','DR.DIVYA PRIYADARSHINI.N','Dr.BALARAMAN R','DR.AKSHAYA KEERTHIKHA'];
-
-$("#btnAddRD").on("click", function() {
-  createRDRow();
-});
-
-function createRDRow(data = {}) {
-  const tr = $(`
-    <tr>
-      <td><select class="rd-speciality" style="width:100%">${RDspeciality.map(s=>`<option>${s}</option>`).join('')}</select></td>
-      <td><select class="rd-doctor" style="width:100%">${RDnames.map(d=>`<option>${d}</option>`).join('')}</select></td>
-      <td><select class="rd-priority" style="width:100%">${RDpriority.map(p=>`<option>${p}</option>`).join('')}</select></td>
-      <td><input class="instructions" style="width:100%" type="text"></td>
-      <td><input type="date" class="date" style="width:100%"></td>
-      <td><button class="btn ghost remove">Remove</button></td>
-    </tr>
-  `);
-
-  // Safely assign values
-  tr.find('.rd-speciality').val(data.Specialityy || 'Cardiology');
-  tr.find('.rd-doctor').val(data.Dname || 'DR.PILLAI C.V.');
-  tr.find('.rd-priority').val(data.priority || 'Routine');
-  tr.find('.instructions').val(data.instructions || '');
-  tr.find('.date').val(data.date || new Date().toISOString().substring(0,10));
-
-  tr.on("click", ".remove", function() {
-    tr.remove();
-  });
-
-  $("#tbodyRD").append(tr);
+.section-title {
+  margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    padding-bottom: 4px;
 }
 
-// Example default row
-createRDRow({
-  Specialityy: 'Cardiology',
-  Dname: 'DR.PILLAI C.V.',
-  priority: 'Urgent',
-  instructions: 'Need heart test'
-});
-
-$("#today").text(new Date().toLocaleDateString());
-
-
-  function generateSummary(summaryLines, summaryBoxId, summaryTextareaId) {
-  const box = document.getElementById(summaryBoxId);
-  const ta = document.getElementById(summaryTextareaId);
-
-  if (!box || !ta) {
-    console.error("Invalid element IDs provided.");
-    return;
-  }
-
-  // Make box visible and clear previous text
-  box.classList.remove('hidden');
-  ta.value = '';
-
-  let i = 0, j = 0;
-
-  function typeChar() {
-    if (i < summaryLines.length) {
-      if (j < summaryLines[i].length) {
-        ta.value += summaryLines[i][j++];
-        setTimeout(typeChar, 20);
-      } else {
-        ta.value += "\n";
-        i++;
-        j = 0;
-        setTimeout(typeChar, 120);
-      }
-    }
-  }
-
-  typeChar();
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 14px;
 }
-  document.getElementById('generateSummary').addEventListener('click', () => {
-  const lines = [
-    "Patient presented with complaints of headache and fever.",
-    "Vitals were stable. Further investigations advised.",
-    "Prescribed Paracetamol and advised follow-up in 5 days."
-  ];
-  generateSummary(lines, 'summaryBox', 'summaryTextarea');
-});
-
-
-
-
-//  let recognition;
-//   let activeTextBox = null;
-
-  // function startRecording(textBoxId) {
-  //   // Stop existing recognition if active
-  //   if (recognition) recognition.stop();
-
-  //   activeTextBox = document.getElementById(textBoxId);
-
-  //   if (!('webkitSpeechRecognition' in window)) {
-  //     alert('Sorry, your browser does not support speech recognition.');
-  //     return;
-  //   }
-
-  //   recognition = new webkitSpeechRecognition();
-  //   recognition.continuous = true; // Keep listening until stopped manually
-  //   recognition.interimResults = true;
-  //   recognition.lang = 'en-IN';
-
-  //   let finalTranscript = '';
-
-  //   recognition.onstart = () => {
-  //     console.log(`🎙️ Listening... (${textBoxId})`);
-  //     activeTextBox.placeholder = "Listening... please speak clearly 🎤";
-  //   };
-
-  //   recognition.onresult = (event) => {
-  //     let interimTranscript = '';
-  //     for (let i = event.resultIndex; i < event.results.length; ++i) {
-  //       if (event.results[i].isFinal) {
-  //         finalTranscript += event.results[i][0].transcript + ' ';
-  //       } else {
-  //         interimTranscript += event.results[i][0].transcript;
-  //       }
-  //     }
-  //     activeTextBox.value = finalTranscript + interimTranscript;
-  //   };
-
-  //   recognition.onerror = (event) => {
-  //     console.warn("Speech recognition error:", event.error);
-
-  //     switch (event.error) {
-  //       case 'no-speech':
-  //         alert("⚠️ No speech detected. Please speak louder or closer to the mic.");
-  //         break;
-  //       case 'audio-capture':
-  //         alert("🎧 No microphone detected. Please connect one.");
-  //         break;
-  //       case 'not-allowed':
-  //         alert("🚫 Microphone permission denied. Allow access to use voice input.");
-  //         break;
-  //       default:
-  //         alert("⚠️ Speech recognition error: " + event.error);
-  //     }
-  //   };
-
-  //   recognition.onend = () => {
-  //     console.log("🎤 Recording stopped.");
-  //     activeTextBox.placeholder = "";
-  //   };
-
-  //   recognition.start();
-  // }
-
-  // function stopRecording() {
-  //   if (recognition) {
-  //     recognition.stop();
-  //     console.log("🛑 Recording manually stopped.");
-  //   }
-  // }
-
-  // function clearText(textBoxId) {
-  //   document.getElementById(textBoxId).value = '';
-  // }
-
-
-// // --- Speech recognition helpers (drop into script.js) ---
-// let recognition = null;
-// let activeTextBox = null;   // current textarea DOM element
-// let _isUserStopping = false; // to differentiate intentional stop vs auto end
-
-// function isRecording() {
-//   return !!recognition;
-// }
-
-// function startRecording(textBoxId) {
-//   try {
-//     // If already recording for same textbox, ignore.
-//     if (isRecording()) {
-//       const currentId = activeTextBox ? activeTextBox.id : null;
-//       if (currentId === textBoxId) {
-//         console.log('Already recording for', textBoxId);
-//         return;
-//       }
-//       // otherwise stop previous recorder first
-//       stopRecording();
-//     }
-
-//     activeTextBox = document.getElementById(textBoxId);
-//     if (!activeTextBox) {
-//       console.warn('No element found for', textBoxId);
-//       return;
-//     }
-
-//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-//     if (!SpeechRecognition) {
-//       alert('Sorry, your browser does not support speech recognition.');
-//       return;
-//     }
-
-//     recognition = new SpeechRecognition();
-//     recognition.continuous = true;
-//     recognition.interimResults = true;
-//     recognition.lang = 'en-IN'; // as you had
-
-//     recognition.onstart = () => {
-//       console.log('🎙️ recognition started for', textBoxId);
-//       activeTextBox.placeholder = 'Listening... please speak clearly 🎤';
-//       _isUserStopping = false;
-//     };
-
-//     recognition.onresult = (event) => {
-//       // Rebuild the full transcript from current results to avoid duplication
-//       let finalTranscript = '';
-//       let interimTranscript = '';
-
-//       for (let i = 0; i < event.results.length; i++) {
-//         const transcript = event.results[i][0].transcript;
-//         if (event.results[i].isFinal) finalTranscript += transcript + ' ';
-//         else interimTranscript += transcript;
-//       }
-
-//       // Keep existing typed text plus recognition text:
-//       // If user had typed something previously, preserve it and append recognition text.
-//       const typedPrefix = (activeTextBox.dataset.userText || '').trim();
-//       const built = ((typedPrefix ? typedPrefix + ' ' : '') + (finalTranscript + interimTranscript)).trim();
-//       activeTextBox.value = built;
-//     };
-
-//     // If user types manually while recording, store that prefix so recognition appends sensibly
-//     const onInputSavePrefix = (e) => {
-//       activeTextBox.dataset.userText = e.target.value || '';
-//     };
-//     activeTextBox.addEventListener('input', onInputSavePrefix);
-
-//     recognition.onerror = (event) => {
-//       console.warn('Speech recognition error:', event);
-//       switch (event.error) {
-//         case 'no-speech':
-//           alert('⚠️ No speech detected. Please speak louder or closer to the mic.');
-//           break;
-//         case 'audio-capture':
-//           alert('🎧 No microphone detected. Please connect one.');
-//           break;
-//         case 'not-allowed':
-//           alert('🚫 Microphone permission denied. Allow access to use voice input.');
-//           break;
-//         default:
-//           // show only once-friendly details
-//           console.warn('Speech error', event.error);
-//       }
-//     };
-
-//     recognition.onend = () => {
-//       // If user intentionally stopped, we already cleaned up in stopRecording.
-//       // Otherwise, just release and clear placeholder
-//       console.log('🎤 recognition ended');
-//       if (activeTextBox) activeTextBox.placeholder = '';
-//       // remove the input listener
-//       if (activeTextBox) activeTextBox.removeEventListener('input', onInputSavePrefix);
-//       // make sure reference cleared
-//       recognition = null;
-//       activeTextBox = null;
-//     };
-
-//     // start
-//     recognition.start();
-//   } catch (err) {
-//     console.error('startRecording error', err);
-//     alert('Unable to start speech recognition: ' + err.message);
-//     recognition = null;
-//     activeTextBox = null;
-//   }
-// }
-
-// function stopRecording() {
-//   if (!recognition) {
-//     console.log('No active recognition to stop');
-//     return;
-//   }
-//   try {
-//     _isUserStopping = true;
-//     // remove handlers to avoid stray events
-//     recognition.onresult = null;
-//     recognition.onerror = null;
-//     recognition.onend = null;
-//     try { recognition.stop(); } catch (e) { /* ignore */ }
-//   } finally {
-//     // ensure we clear references and placeholder
-//     if (activeTextBox) {
-//       activeTextBox.placeholder = '';
-//       // clear temporary dataset.userText so next session starts fresh
-//       delete activeTextBox.dataset.userText;
-//       activeTextBox = null;
-//     }
-//     recognition = null;
-//     console.log('Recording stopped by user');
-//   }
-// }
-
-// ================= Robust multi-pair Record/Stop handler (drop-in replacement) =================
-
-// single recognition instance at a time (browser limitation for many cases)
-let recognition = null;
-let activeTextBox = null;
-let activeControl = null; // jQuery element of the controls wrapper where recording started
-
-// utility: find .controls wrapper for a given element (falls back to closest parent)
-function findControlsFor(el) {
-  const $el = $(el);
-  const $controls = $el.closest('.controls');
-  if ($controls.length) return $controls;
-  // fallback: search siblings of el's parent
-  return $el.parent().find('.controls').first();
+.info-row div {
+    width: 32%;
 }
 
-// utility: find related STOP button inside a controls wrapper, robustly
-function findStopButton($controls) {
-  // prefer element with stop icon/text
-  let $stop = $controls.find('button, img').filter(function() {
-    const $t = $(this);
-    const txt = ($t.text() || '').trim();
-    const id = ($t.attr('id') || '').toLowerCase();
-    return txt.indexOf('⏹') !== -1 || id.indexOf('stop') !== -1;
-  }).first();
-  if ($stop.length) return $stop;
-  // fallback: any button with class 'stop' or 'stop-btn'
-  $stop = $controls.find('button.stop, button.stop-btn, img.stop, img.stop-btn').first();
-  return $stop.length ? $stop : null;
+.textareaprint {
+    width: 98%;
+    border-radius: 5px;
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 14px;
+    resize: none;
+    border: none;
 }
 
-// utility: find related RECORD button inside a controls wrapper
-function findRecordButton($controls) {
-  let $rec = $controls.find('button, img').filter(function() {
-    const $t = $(this);
-    const txt = ($t.text() || '').trim();
-    const id = ($t.attr('id') || '').toLowerCase();
-    return txt.indexOf('🎙') !== -1 || txt.toLowerCase().indexOf('record') !== -1 || id.indexOf('record') !== -1;
-  }).first();
-  if ($rec.length) return $rec;
-  $rec = $controls.find('button.record, button.record-btn, img.record, img.record-btn').first();
-  return $rec.length ? $rec : null;
+
+
+.tableprint {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
 }
 
-// UI toggle helpers
-function showStopHideRecord($controls) {
-  const $stop = findStopButton($controls);
-  const $rec  = findRecordButton($controls);
-  if ($rec) $rec.hide();
-  if ($stop) $stop.show();
-}
-function showRecordHideStop($controls) {
-  const $stop = findStopButton($controls);
-  const $rec  = findRecordButton($controls);
-  if ($stop) $stop.hide();
-  if ($rec) $rec.show();
+.tableprint th,
+.tableprint td {
+    border: 1px solid #000;
+    padding: 6px;
+    text-align: left;
 }
 
-// Core: start recording for a text area id, with optional controls element (jQuery) for button swapping
-async function newStartRecording(textBoxId, $controls) {
-  try {
-    // UI immediate feedback
-    if ($controls) showStopHideRecord($controls);
 
-    // stop any existing recognition (we support only one at a time)
-    if (recognition) {
-      try { recognition.stop(); } catch(_) {}
-      recognition = null;
-      activeTextBox = null;
-      activeControl = null;
-    }
-
-    // find the textarea element
-    const el = document.getElementById(textBoxId);
-    if (!el) {
-      console.warn('startRecording: text box not found for id:', textBoxId);
-      if ($controls) showRecordHideStop($controls);
-      return;
-    }
-    activeTextBox = el;
-    activeControl = $controls || null;
-
-    // feature detect
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Your browser does not support speech recognition (SpeechRecognition API). Use Chrome/Edge.');
-      if ($controls) showRecordHideStop($controls);
-      return;
-    }
-
-    // create recognition
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-IN';
-
-    // preserve typed text prefix
-    const onInputSavePrefix = (e) => { activeTextBox.dataset.userText = e.target.value || ''; };
-    activeTextBox.addEventListener('input', onInputSavePrefix);
-
-    recognition.onstart = () => {
-      console.log('Recognition started for', textBoxId);
-      activeTextBox.placeholder = 'Listening...';
-    };
-
-    recognition.onresult = (event) => {
-      let finalTranscript = '';
-      let interimTranscript = '';
-      for (let i = 0; i < event.results.length; ++i) {
-        const t = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalTranscript += t + ' ';
-        else interimTranscript += t;
-      }
-      const typedPrefix = (activeTextBox.dataset.userText || '').trim();
-      const built = ((typedPrefix ? typedPrefix + ' ' : '') + (finalTranscript + interimTranscript)).trim();
-      activeTextBox.value = built;
-    };
-
-    recognition.onerror = (ev) => {
-      console.warn('Speech recognition error', ev);
-      // gentle alert for common issues
-      if (ev && ev.error === 'not-allowed') alert('Microphone permission denied. Allow it from browser site settings.');
-      else if (ev && ev.error === 'audio-capture') alert('No microphone detected.');
-      // restore UI
-      if (activeControl) showRecordHideStop(activeControl);
-    };
-
-    recognition.onend = () => {
-      console.log('Recognition ended');
-      if (activeTextBox) activeTextBox.placeholder = '';
-      if (activeControl) showRecordHideStop(activeControl);
-      // cleanup
-      if (activeTextBox) {
-        activeTextBox.removeEventListener('input', onInputSavePrefix);
-        delete activeTextBox.dataset.userText;
-      }
-      recognition = null;
-      activeTextBox = null;
-      activeControl = null;
-    };
-
-    // request permission first (opens popup if needed)
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(t => t.stop()); // stop immediately; we only needed permission
-      } catch (err) {
-        console.error('getUserMedia permission error', err);
-        alert('Microphone access denied or blocked. Please allow microphone in site settings.');
-        if ($controls) showRecordHideStop($controls);
-        recognition = null;
-        activeTextBox = null;
-        activeControl = null;
-        return;
-      }
-    }
-
-    // finally start recognition
-    try {
-      recognition.start();
-    } catch (err) {
-      console.warn('recognition.start() threw', err);
-    }
-
-  } catch (err) {
-    console.error('newStartRecording error', err);
-    if ($controls) showRecordHideStop($controls);
-    recognition = null;
-    activeTextBox = null;
-    activeControl = null;
-  }
+.footerr {
+    margin-top: 25px;
+    border-top: 2px solid #000;
+    padding-top: 10px;
+    font-size: 13px;
+    text-align: center;
+    line-height: 18px;
 }
 
-// Core: stop recording; optionally pass controls to toggle UI
-function newStopRecording($controls) {
-  try {
-    if (recognition) {
-      try { recognition.stop(); } catch (_) {}
-      // recognition.onend will do cleanup and UI swap
-    } else {
-      // still ensure UI swap even if no active recognition
-      if ($controls) showRecordHideStop($controls);
-    }
-  } catch (err) {
-    console.error('newStopRecording error', err);
-    if ($controls) showRecordHideStop($controls);
-    recognition = null;
-    activeTextBox = null;
-    activeControl = null;
-  }
+.footersign {
+    margin-top: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    display: flex;
+    text-align: end;
 }
 
-/*
-  Support for existing inline onclicks:
-  - startRecording('chief')  OR startRecording('chief', this)
-  - stopRecording() OR stopRecording(null, this)
-  We intercept clicks on such elements and forward to the new handlers, so your HTML need NOT change.
-*/
-
-// Intercept clicks for startRecording(...) inline handlers or delegation on buttons
-$(document).on('click', 'button, img, a', function (e) {
-  try {
-    const onclick = (this.getAttribute && this.getAttribute('onclick')) || '';
-    if (!onclick) return; // no inline onclick - nothing to intercept
-    // Normalize whitespace
-    const normalized = onclick.replace(/\s+/g, '');
-    // startRecording('id') or startRecording("id")
-    const startMatch = normalized.match(/startRecording\((['\"]?)([A-Za-z0-9_-]+)\1(?:,this)?\)/i);
-    if (startMatch) {
-      e.preventDefault();
-      const textBoxId = startMatch[2];
-      const $controls = findControlsFor(this);
-      // ensure stop button hidden/shown properly before starting
-      newStartRecording(textBoxId, $controls);
-      return;
-    }
-    // stopRecording() or stopRecording(null,this)
-    const stopMatch = normalized.match(/stopRecording\(([^)]*)\)/i);
-    if (stopMatch) {
-      e.preventDefault();
-      const $controls = findControlsFor(this);
-      newStopRecording($controls);
-      return;
-    }
-  } catch (err) {
-    console.error('click intercept error', err);
-  }
-});
-
-// Also attach handlers for elements that call startRecording/stopRecording programmatically
-// Provide backward-compatible global functions wrapper:
-window.startRecording = function(textBoxId, caller) {
-  const $controls = caller ? findControlsFor(caller) : (document.getElementById(textBoxId) ? $(document.getElementById(textBoxId)).closest('.controls') : null);
-  newStartRecording(textBoxId, $controls);
-};
-
-window.stopRecording = function(textBoxId, caller) {
-  const $controls = caller ? findControlsFor(caller) : (activeControl || null);
-  newStopRecording($controls);
-};
 
 
-function clearText(textBoxId) {
-  const el = document.getElementById(textBoxId);
-  if (!el) return;
-  el.value = '';
-  delete el.dataset.userText;
+@media print {
+    textarea { border: none; }
 }
 
-prescriptionModal
-function openModal(id) {
-  document.getElementById(id).style.display = "block";
-  document.body.style.overflow = "hidden";  // disable background scroll
-}
+</style>
 
-function closeModal(id) {
-  document.getElementById(id).style.display = "none";
-  document.body.style.overflow = "auto";    // re-enable background scroll
-}
+<div class="bodyprint">
 
-// Import selected items into Medicine Table
-function importSelected() {
-  const checkboxes = document.querySelectorAll('.prescriptionItem');
-  const medicineTable = document.querySelector('#rxTable tbody');
+<div class="section-title">Patient Details</div>
 
-  checkboxes.forEach(chk => {
-    if (chk.checked) {
-      const row = chk.parentElement.parentElement;
-      const cells = row.querySelectorAll('td');
-      const newRow = document.createElement('tr');
+<div class="info-row">
+    <div><b>Name:</b> SATHISH</div>
+    <div><b>UHID:</b> 25642</div>
+    <div><b>Date:</b> 27-Sep-2025</div>
+</div>
 
-      // Copy prescription data into medicine table
-      newRow.innerHTML = `
-        <td>${cells[1].innerText}</td>
-        <td>${cells[2].innerText}</td>
-        <td>${cells[3].innerText}</td>
-        <td>${cells[4].innerText}</td>
-        <td>${cells[5].innerText}</td>
-        <td><button onclick="removeRow(this)">Remove</button></td>
-      `;
+<div class="info-row">
+    <div><b>DOB:</b> 06-Aug-2001</div>
+    <div><b>Age:</b> 25</div>
+    <div><b>Gender:</b> MALE</div>
+</div>
 
-      medicineTable.appendChild(newRow);
-      chk.checked = false; // reset checkbox
-    }
-  });
+<div class="section-title">Vitals</div>
+<table class="tableprint">
+    <tr><th>PR</th><td>78 bpm</td><th>RR</th><td>18/min</td><th>BP (Sys)</th><td>120</td><th>BP (Dia)</th><td>80</td></tr>
+    <tr><th>SpO2</th><td>98%</td><th>Height</th><td>170 cm</td><th>Weight</th><td>65 kg</td><td colspan="2"></td></tr>
+</table>
 
-  closeModal('prescriptionModal');
-}
+<div class="section-title">Chief Complaints</div>
+<textarea rows="3" class="textareaprint">Fever and body pain since 2 days</textarea>
 
-function removeRow(btn) {
-  btn.closest('tr').remove();
-}
+<div class="section-title">History</div>
+<textarea rows="3" class="textareaprint">No previous major illness</textarea>
 
-function openPrintPage() {
-    const printWindow = window.open("", "_blank");
-    
-    // If popup blocker stops new tab
-    if (!printWindow) {
-        alert("Please allow popups to view the print preview.");
-    }}
+<div class="section-title">Examination</div>
+<textarea rows="3" class="textareaprint">Patient stable. No abnormalities noted.</textarea>
 
+<div class="section-title">ICD Codes</div>
+<table class="tableprint">
+<tr><th>ICD Code</th><th>Description</th></tr>
+<tr><td>G10</td><td>Huntington’s disease</td></tr>
+<tr><td>F32.3</td><td>Major depressive disorder</td></tr>
+<tr><td>J00</td><td>Common Cold</td></tr>
+</table>
 
-function fnCallPrint(obj, placeId) {
-    try {
-        const container = document.getElementById(placeId);
-        if (!container) return;
+<div class="section-title" >Prescription</div>
+<table class="tableprint">
+<tr><th>Sl.No</th><th>Medicine</th><th>Frequency</th><th>Days</th><th>Qty</th><th>Timing</th></tr>
+<tr><td>1</td><td>DOLO 650 TAB</br><label style="font-size: 8px;">PARACETAMOL</label></td><td>2</td><td>5</td><td>10</td><td>Morning, Night</td></tr>
+<tr><td>2</td><td>AZEE 500 MG TAB </br><label style="font-size: 8px;">AZITHROMYCIN</label></td><td>1</td><td>3</td><td>3</td><td>Morning</td></tr>
+<tr><td>3</td><td>CIPLOX D DROPS </br><label style="font-size: 8px;">CIPROFLOXACIN HYDROCHLORIDE+DEXAMETHASONE</label></td><td>1</td><td>7</td><td>7</td><td>Evening</td></tr>
+</table>
 
-        const printWin = window.open("", "_blank", "width=900,height=700");
+<div class="section-title">Lab & Imaging Test</div>
+<table class="tableprint">
+<tr><th>#</th><th>Test</th><th>Category</th><th>Priority</th><th>Instructions</th><th>Date</th></tr>
+<tr><td>1</td><td>CBC</td><td>Blood</td><td>Urgent</td><td>-</td><td>10-11-2025</td></tr>
+<tr><td>2</td><td>RFT</td><td>Blood</td><td>Urgent</td><td>-</td><td>10-11-2025</td></tr>
+<tr><td>3</td><td>USG-Abdomen</td><td>Imaging</td><td>Urgent</td><td>empty stomach fasting</td><td>10-11-2025</td></tr>
+</table>
+<div class="section-title">Doctor Notes</div>
+<textarea rows="3" class="textareaprint">
+Patient reports mild abdominal discomfort. No nausea or vomiting. Vitals stable.
+</textarea>
 
-        printWin.document.open();
-        printWin.document.write(`
-        <html>
-        <head>
-            <style>
+<div class="section-title">Pain Assessment</div>
+<textarea rows="3" class="textareaprint">
+Pain Score: 4/10. Mild abdominal pain, non-radiating, increases after meals.
+</textarea>
 
-                @page { size: A4; margin: 0; }
-                body { margin: 0; font-family: Arial; }
-          
-                .bodyprint {
-                    font-family: Arial, Helvetica, sans-serif;
-                    color: #000;
-                    background: #fff;
-                    margin: 0;
-                    padding: 2mm;
-                }
+<div class="section-title">Plan of Care</div>
+<textarea rows="3" class="textareaprint">
+Start antacid medication. Advise increased water intake. Monitor symptoms for 24–48 hours.
+</textarea>
 
-                .title { font-size: 22px; font-weight: bold; }
-                .sub-title { font-size: 14px; margin-top: -6px; }
+<div class="section-title">Physical Activity</div>
+<textarea rows="3" class="textareaprint">
+Light walking advised. Avoid heavy lifting and strenuous activities for 2–3 days.
+</textarea>
 
-                .section-title {
-                    margin-top: 10px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    border-bottom: 1px solid #000;
-                    padding-bottom: 4px;
-                }
+<div class="section-title">Diet Advice</div>
+<textarea rows="3" class="textareaprint">
+Take soft, non-spicy food. Avoid oily items. Eat small, frequent meals.
+</textarea>
+<div class="section-title">Admission Request</div>
+<textarea rows="3" class="textareaprint">Medical management recommended. No surgery required.</textarea>
 
-                .info-row {
-                    display: flex;
-                    justify-content: space-between;
-                    margin: 6px 0;
-                    font-size: 14px;
-                }
-                .info-row div { width: 32%; }
+<div class="section-title">Visit Summary</div>
+<textarea rows="4" class="textareaprint">Here is your visit summary generated by AI based on the information you provided.</textarea>
 
-                .textareaprint {
-                    width: 98%;
-                    border-radius: 5px;
-                    padding: 8px;
-                    margin-top: 5px;
-                    font-size: 14px;
-                    resize: none;
-                    border: none;
-                }
+<div class="section-title">Future Appointment</div>
+<table class="tableprint">
+<tr><th>#</th><th>Type</th><th>Date</th><th>Speciality</th><th>Doctor</th><th>Time & slot</th></tr>
+<tr><td>1</td><th>Review</th><td>05-Oct-2025</td><td>Cardiology</td><td>Dr.ASHOKKUMAR</td><td>09:00 AM</td></tr>
+<tr><td>2</td><th>Cross Reference</th><td>06-Oct-2025</td><td>Endocrinology</td><td>Dr.GEETHALAKSHMI</td><td>09:00 AM</td></tr>
+</table>
 
-                .tableprint {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 10px;
-                    font-size: 14px;
-                }
+<div style=" margin-top: 50px;
+    font-size: 15px;
+    font-weight: bold;
+    float:right;">
+    Dr.ASHOKKUMAR<br>
+    Cardiology<br>
+    Consultant Physician
+</div>
 
-                .tableprint th, .tableprint td {
-                    border: 1px solid #000;
-                    padding: 6px;
-                    text-align: left;
-                }
+</div>
+</div>
 
-                .footerr {
-                    margin-top: 25px;
-                    border-top: 2px solid #000;
-                    padding-top: 10px;
-                    font-size: 13px;
-                    text-align: center;
-                    line-height: 18px;
-                }
+    </section>
+  </main>
+  <script src="/jquery-3.6.4.min.js"></script>
+  <script src="/script.js"></script>
 
-                .footer-sign {
-                    margin-top: 15px;
-                    font-size: 15px;
-                    font-weight: bold;
-                }
-
-
-                .page {
-                    display: grid;
-                    grid-template-rows: 10% 80% 10%;
-                    height: 100vh;
-                    page-break-after: always;
-                }
-
-                .header {
-                    padding: 10px;
-                }
-
-                .content {
-                    padding: 20px;
-                    overflow: hidden;
-
-                    /* 4-side border */
-                    // border: 5px solid black;
-
-                    /* Prevent first page being empty */
-                    min-height: 30px;
-                }
-
-                .footer {
-                    padding: 10px;
-                    text-align: center;
-                    font-size: 13px;
-                }
-
-                tr { page-break-inside: avoid; }
-                textarea { border: none; }
-
-            </style>
-        </head>
-
-        <body>
-            <div id="printRoot"></div>
-        </body>
-        </html>
-        `);
-
-        printWin.document.close();
-
-        printWin.onload = function () {
-            const doc = printWin.document;
-            const printRoot = doc.getElementById("printRoot");
-
-            doc.body.offsetHeight;
-            const blocks = Array.from(container.querySelector(".bodyprint").children);
-
-            let currentPage = createPage();
-            let contentBox = currentPage.querySelector(".content");
-
-            blocks.forEach(block => {
-
-                const clone = block.cloneNode(true);
-                contentBox.appendChild(clone);
-
-                if (contentBox.scrollHeight > contentBox.clientHeight) {
-
-                    contentBox.removeChild(contentBox.lastElementChild);
-
-                    currentPage = createPage();
-                    contentBox = currentPage.querySelector(".content");
-
-              contentBox.appendChild(block.cloneNode(true));
-                }
-            });
-
-            function createPage() {
-                const page = doc.createElement("div");
-                page.className = "page";
-
-                page.innerHTML = `
-                    <div class="header">
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <div style="display:flex;align-items:center;">
-                                <img src="./images/KMH_LOGO.webp" style="width:90px;">
-                                <div style="margin-left:10px;font-size:17px;font-weight:bold;">
-                                    Dr.KAMAKSHI MEMORIAL HOSPITAL PVT LTD.<br>
-                                    Pallikaranai, Chennai – 600 100.
-                                </div>
-                            </div>
-                            <div style="display:flex;gap:10px;align-items:center;">
-                                <img src="./images/nabh-log.jpg" style="width:55px;">
-                                <img src="./images/nabllogo.jpg" style="width:55px;">
-                            </div>
-                        </div>
-                        <hr>
-                    </div>
-
-                    <div class="content"></div>
-
-                    <div class="footer" style=" border-top: 1px sold grey ! important; ">
-                        <b>Dr.KAMAKSHI MEMORIAL HOSPITAL PVT LTD.</b><br>
-                        No.1, Radial Road, Pallikaranai, Chennai – 600 100<br>
-                        Phone:+91 - 44 - 66 300 300 | Email: info@drkmh.in<br>
-                        WhatsApp:+91 99627 25555<br>
-                        Website: www.drkmh.in
-                    </div>
-                `;
-
-                printRoot.appendChild(page);
-                return page;
-            }
-
-            setTimeout(() => {
-                printWin.print();
-                printWin.close();
-            }, 400);
-        };
-
-    } catch (err) {
-        console.error(err);
-    }
-}
-
+</body>
+</html>
