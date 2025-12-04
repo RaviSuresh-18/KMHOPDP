@@ -45,11 +45,9 @@ return
           <td>${p.SlotTime}</td>
           <td>${p.uhid}</td>
           <td>${p.name}</td>
-          <td>${p.bill} <img src="./Images/icn_edit.png" id="editbillbtn" onclick="showeditpopup('billlpopupBox')" class="editIcon" style="cursor:pointer;" /></td>
+          <td>${p.bill} </td>
           <td>
-            <div class="actions-row" style="display: flex;align-items: center;">
-              <button class="btn ghost Arrbtn">Arrived</button>
-              <img src="./Images/tick.png" class="arrivedtick" style="display:none;" />
+            <div class="actions-row" style="display: flex;align-items: center;">          
               <button class="btn ghost assessBtn">Assess</button>
               <img src="./Images/ico_print.png" onclick="fnCallPrint(this,'finalprint',1)" /> 
 
