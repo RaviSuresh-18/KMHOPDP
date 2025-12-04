@@ -1109,15 +1109,15 @@ function fnCallPrint(obj, placeId) {
                     <div class="header">
                         <div style="display:flex;justify-content:space-between;align-items:center;">
                             <div style="display:flex;align-items:center;">
-                                <img src="./images/KMH_LOGO.webp" style="width:90px;">
+                                <img src="./Images/KMH_LOGO.webp" style="width:90px;">
                                 <div style="margin-left:10px;font-size:17px;font-weight:bold;">
                                     Dr.KAMAKSHI MEMORIAL HOSPITAL PVT LTD.<br>
                                     Pallikaranai, Chennai – 600 100.
                                 </div>
                             </div>
                             <div style="display:flex;gap:10px;align-items:center;">
-                                <img src="./images/nabh-log.jpg" style="width:55px;">
-                                <img src="./images/nabllogo.jpg" style="width:55px;">
+                                <img src="./Images/nabh-log.jpg" style="width:55px;">
+                                <img src="./Images/nabllogo.jpg" style="width:55px;">
                             </div>
                         </div>
                         <hr>
