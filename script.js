@@ -439,139 +439,457 @@ $("#today").text(new Date().toLocaleDateString());
 
 
 
-// --- Speech recognition helpers (drop into script.js) ---
-let recognition = null;
-let activeTextBox = null;   // current textarea DOM element
-let _isUserStopping = false; // to differentiate intentional stop vs auto end
+//  let recognition;
+//   let activeTextBox = null;
 
-function isRecording() {
-  return !!recognition;
+  // function startRecording(textBoxId) {
+  //   // Stop existing recognition if active
+  //   if (recognition) recognition.stop();
+
+  //   activeTextBox = document.getElementById(textBoxId);
+
+  //   if (!('webkitSpeechRecognition' in window)) {
+  //     alert('Sorry, your browser does not support speech recognition.');
+  //     return;
+  //   }
+
+  //   recognition = new webkitSpeechRecognition();
+  //   recognition.continuous = true; // Keep listening until stopped manually
+  //   recognition.interimResults = true;
+  //   recognition.lang = 'en-IN';
+
+  //   let finalTranscript = '';
+
+  //   recognition.onstart = () => {
+  //     console.log(`🎙️ Listening... (${textBoxId})`);
+  //     activeTextBox.placeholder = "Listening... please speak clearly 🎤";
+  //   };
+
+  //   recognition.onresult = (event) => {
+  //     let interimTranscript = '';
+  //     for (let i = event.resultIndex; i < event.results.length; ++i) {
+  //       if (event.results[i].isFinal) {
+  //         finalTranscript += event.results[i][0].transcript + ' ';
+  //       } else {
+  //         interimTranscript += event.results[i][0].transcript;
+  //       }
+  //     }
+  //     activeTextBox.value = finalTranscript + interimTranscript;
+  //   };
+
+  //   recognition.onerror = (event) => {
+  //     console.warn("Speech recognition error:", event.error);
+
+  //     switch (event.error) {
+  //       case 'no-speech':
+  //         alert("⚠️ No speech detected. Please speak louder or closer to the mic.");
+  //         break;
+  //       case 'audio-capture':
+  //         alert("🎧 No microphone detected. Please connect one.");
+  //         break;
+  //       case 'not-allowed':
+  //         alert("🚫 Microphone permission denied. Allow access to use voice input.");
+  //         break;
+  //       default:
+  //         alert("⚠️ Speech recognition error: " + event.error);
+  //     }
+  //   };
+
+  //   recognition.onend = () => {
+  //     console.log("🎤 Recording stopped.");
+  //     activeTextBox.placeholder = "";
+  //   };
+
+  //   recognition.start();
+  // }
+
+  // function stopRecording() {
+  //   if (recognition) {
+  //     recognition.stop();
+  //     console.log("🛑 Recording manually stopped.");
+  //   }
+  // }
+
+  // function clearText(textBoxId) {
+  //   document.getElementById(textBoxId).value = '';
+  // }
+
+
+// // --- Speech recognition helpers (drop into script.js) ---
+// let recognition = null;
+// let activeTextBox = null;   // current textarea DOM element
+// let _isUserStopping = false; // to differentiate intentional stop vs auto end
+
+// function isRecording() {
+//   return !!recognition;
+// }
+
+// function startRecording(textBoxId) {
+//   try {
+//     // If already recording for same textbox, ignore.
+//     if (isRecording()) {
+//       const currentId = activeTextBox ? activeTextBox.id : null;
+//       if (currentId === textBoxId) {
+//         console.log('Already recording for', textBoxId);
+//         return;
+//       }
+//       // otherwise stop previous recorder first
+//       stopRecording();
+//     }
+
+//     activeTextBox = document.getElementById(textBoxId);
+//     if (!activeTextBox) {
+//       console.warn('No element found for', textBoxId);
+//       return;
+//     }
+
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//     if (!SpeechRecognition) {
+//       alert('Sorry, your browser does not support speech recognition.');
+//       return;
+//     }
+
+//     recognition = new SpeechRecognition();
+//     recognition.continuous = true;
+//     recognition.interimResults = true;
+//     recognition.lang = 'en-IN'; // as you had
+
+//     recognition.onstart = () => {
+//       console.log('🎙️ recognition started for', textBoxId);
+//       activeTextBox.placeholder = 'Listening... please speak clearly 🎤';
+//       _isUserStopping = false;
+//     };
+
+//     recognition.onresult = (event) => {
+//       // Rebuild the full transcript from current results to avoid duplication
+//       let finalTranscript = '';
+//       let interimTranscript = '';
+
+//       for (let i = 0; i < event.results.length; i++) {
+//         const transcript = event.results[i][0].transcript;
+//         if (event.results[i].isFinal) finalTranscript += transcript + ' ';
+//         else interimTranscript += transcript;
+//       }
+
+//       // Keep existing typed text plus recognition text:
+//       // If user had typed something previously, preserve it and append recognition text.
+//       const typedPrefix = (activeTextBox.dataset.userText || '').trim();
+//       const built = ((typedPrefix ? typedPrefix + ' ' : '') + (finalTranscript + interimTranscript)).trim();
+//       activeTextBox.value = built;
+//     };
+
+//     // If user types manually while recording, store that prefix so recognition appends sensibly
+//     const onInputSavePrefix = (e) => {
+//       activeTextBox.dataset.userText = e.target.value || '';
+//     };
+//     activeTextBox.addEventListener('input', onInputSavePrefix);
+
+//     recognition.onerror = (event) => {
+//       console.warn('Speech recognition error:', event);
+//       switch (event.error) {
+//         case 'no-speech':
+//           alert('⚠️ No speech detected. Please speak louder or closer to the mic.');
+//           break;
+//         case 'audio-capture':
+//           alert('🎧 No microphone detected. Please connect one.');
+//           break;
+//         case 'not-allowed':
+//           alert('🚫 Microphone permission denied. Allow access to use voice input.');
+//           break;
+//         default:
+//           // show only once-friendly details
+//           console.warn('Speech error', event.error);
+//       }
+//     };
+
+//     recognition.onend = () => {
+//       // If user intentionally stopped, we already cleaned up in stopRecording.
+//       // Otherwise, just release and clear placeholder
+//       console.log('🎤 recognition ended');
+//       if (activeTextBox) activeTextBox.placeholder = '';
+//       // remove the input listener
+//       if (activeTextBox) activeTextBox.removeEventListener('input', onInputSavePrefix);
+//       // make sure reference cleared
+//       recognition = null;
+//       activeTextBox = null;
+//     };
+
+//     // start
+//     recognition.start();
+//   } catch (err) {
+//     console.error('startRecording error', err);
+//     alert('Unable to start speech recognition: ' + err.message);
+//     recognition = null;
+//     activeTextBox = null;
+//   }
+// }
+
+// function stopRecording() {
+//   if (!recognition) {
+//     console.log('No active recognition to stop');
+//     return;
+//   }
+//   try {
+//     _isUserStopping = true;
+//     // remove handlers to avoid stray events
+//     recognition.onresult = null;
+//     recognition.onerror = null;
+//     recognition.onend = null;
+//     try { recognition.stop(); } catch (e) { /* ignore */ }
+//   } finally {
+//     // ensure we clear references and placeholder
+//     if (activeTextBox) {
+//       activeTextBox.placeholder = '';
+//       // clear temporary dataset.userText so next session starts fresh
+//       delete activeTextBox.dataset.userText;
+//       activeTextBox = null;
+//     }
+//     recognition = null;
+//     console.log('Recording stopped by user');
+//   }
+// }
+
+// ================= Robust multi-pair Record/Stop handler (drop-in replacement) =================
+
+// single recognition instance at a time (browser limitation for many cases)
+let recognition = null;
+let activeTextBox = null;
+let activeControl = null; // jQuery element of the controls wrapper where recording started
+
+// utility: find .controls wrapper for a given element (falls back to closest parent)
+function findControlsFor(el) {
+  const $el = $(el);
+  const $controls = $el.closest('.controls');
+  if ($controls.length) return $controls;
+  // fallback: search siblings of el's parent
+  return $el.parent().find('.controls').first();
 }
 
-function startRecording(textBoxId) {
+// utility: find related STOP button inside a controls wrapper, robustly
+function findStopButton($controls) {
+  // prefer element with stop icon/text
+  let $stop = $controls.find('button, img').filter(function() {
+    const $t = $(this);
+    const txt = ($t.text() || '').trim();
+    const id = ($t.attr('id') || '').toLowerCase();
+    return txt.indexOf('⏹') !== -1 || id.indexOf('stop') !== -1;
+  }).first();
+  if ($stop.length) return $stop;
+  // fallback: any button with class 'stop' or 'stop-btn'
+  $stop = $controls.find('button.stop, button.stop-btn, img.stop, img.stop-btn').first();
+  return $stop.length ? $stop : null;
+}
+
+// utility: find related RECORD button inside a controls wrapper
+function findRecordButton($controls) {
+  let $rec = $controls.find('button, img').filter(function() {
+    const $t = $(this);
+    const txt = ($t.text() || '').trim();
+    const id = ($t.attr('id') || '').toLowerCase();
+    return txt.indexOf('🎙') !== -1 || txt.toLowerCase().indexOf('record') !== -1 || id.indexOf('record') !== -1;
+  }).first();
+  if ($rec.length) return $rec;
+  $rec = $controls.find('button.record, button.record-btn, img.record, img.record-btn').first();
+  return $rec.length ? $rec : null;
+}
+
+// UI toggle helpers
+function showStopHideRecord($controls) {
+  const $stop = findStopButton($controls);
+  const $rec  = findRecordButton($controls);
+  if ($rec) $rec.hide();
+  if ($stop) $stop.show();
+}
+function showRecordHideStop($controls) {
+  const $stop = findStopButton($controls);
+  const $rec  = findRecordButton($controls);
+  if ($stop) $stop.hide();
+  if ($rec) $rec.show();
+}
+
+// Core: start recording for a text area id, with optional controls element (jQuery) for button swapping
+async function newStartRecording(textBoxId, $controls) {
   try {
-    // If already recording for same textbox, ignore.
-    if (isRecording()) {
-      const currentId = activeTextBox ? activeTextBox.id : null;
-      if (currentId === textBoxId) {
-        console.log('Already recording for', textBoxId);
-        return;
-      }
-      // otherwise stop previous recorder first
-      stopRecording();
+    // UI immediate feedback
+    if ($controls) showStopHideRecord($controls);
+
+    // stop any existing recognition (we support only one at a time)
+    if (recognition) {
+      try { recognition.stop(); } catch(_) {}
+      recognition = null;
+      activeTextBox = null;
+      activeControl = null;
     }
 
-    activeTextBox = document.getElementById(textBoxId);
-    if (!activeTextBox) {
-      console.warn('No element found for', textBoxId);
+    // find the textarea element
+    const el = document.getElementById(textBoxId);
+    if (!el) {
+      console.warn('startRecording: text box not found for id:', textBoxId);
+      if ($controls) showRecordHideStop($controls);
       return;
     }
+    activeTextBox = el;
+    activeControl = $controls || null;
 
+    // feature detect
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Sorry, your browser does not support speech recognition.');
+      alert('Your browser does not support speech recognition (SpeechRecognition API). Use Chrome/Edge.');
+      if ($controls) showRecordHideStop($controls);
       return;
     }
 
+    // create recognition
     recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = 'en-IN'; // as you had
+    recognition.lang = 'en-IN';
+
+    // preserve typed text prefix
+    const onInputSavePrefix = (e) => { activeTextBox.dataset.userText = e.target.value || ''; };
+    activeTextBox.addEventListener('input', onInputSavePrefix);
 
     recognition.onstart = () => {
-      console.log('🎙️ recognition started for', textBoxId);
-      activeTextBox.placeholder = 'Listening... please speak clearly 🎤';
-      _isUserStopping = false;
+      console.log('Recognition started for', textBoxId);
+      activeTextBox.placeholder = 'Listening...';
     };
 
     recognition.onresult = (event) => {
-      // Rebuild the full transcript from current results to avoid duplication
       let finalTranscript = '';
       let interimTranscript = '';
-
-      for (let i = 0; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalTranscript += transcript + ' ';
-        else interimTranscript += transcript;
+      for (let i = 0; i < event.results.length; ++i) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalTranscript += t + ' ';
+        else interimTranscript += t;
       }
-
-      // Keep existing typed text plus recognition text:
-      // If user had typed something previously, preserve it and append recognition text.
       const typedPrefix = (activeTextBox.dataset.userText || '').trim();
       const built = ((typedPrefix ? typedPrefix + ' ' : '') + (finalTranscript + interimTranscript)).trim();
       activeTextBox.value = built;
     };
 
-    // If user types manually while recording, store that prefix so recognition appends sensibly
-    const onInputSavePrefix = (e) => {
-      activeTextBox.dataset.userText = e.target.value || '';
-    };
-    activeTextBox.addEventListener('input', onInputSavePrefix);
-
-    recognition.onerror = (event) => {
-      console.warn('Speech recognition error:', event);
-      switch (event.error) {
-        case 'no-speech':
-          alert('⚠️ No speech detected. Please speak louder or closer to the mic.');
-          break;
-        case 'audio-capture':
-          alert('🎧 No microphone detected. Please connect one.');
-          break;
-        case 'not-allowed':
-          alert('🚫 Microphone permission denied. Allow access to use voice input.');
-          break;
-        default:
-          // show only once-friendly details
-          console.warn('Speech error', event.error);
-      }
+    recognition.onerror = (ev) => {
+      console.warn('Speech recognition error', ev);
+      // gentle alert for common issues
+      if (ev && ev.error === 'not-allowed') alert('Microphone permission denied. Allow it from browser site settings.');
+      else if (ev && ev.error === 'audio-capture') alert('No microphone detected.');
+      // restore UI
+      if (activeControl) showRecordHideStop(activeControl);
     };
 
     recognition.onend = () => {
-      // If user intentionally stopped, we already cleaned up in stopRecording.
-      // Otherwise, just release and clear placeholder
-      console.log('🎤 recognition ended');
+      console.log('Recognition ended');
       if (activeTextBox) activeTextBox.placeholder = '';
-      // remove the input listener
-      if (activeTextBox) activeTextBox.removeEventListener('input', onInputSavePrefix);
-      // make sure reference cleared
+      if (activeControl) showRecordHideStop(activeControl);
+      // cleanup
+      if (activeTextBox) {
+        activeTextBox.removeEventListener('input', onInputSavePrefix);
+        delete activeTextBox.dataset.userText;
+      }
       recognition = null;
       activeTextBox = null;
+      activeControl = null;
     };
 
-    // start
-    recognition.start();
+    // request permission first (opens popup if needed)
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => t.stop()); // stop immediately; we only needed permission
+      } catch (err) {
+        console.error('getUserMedia permission error', err);
+        alert('Microphone access denied or blocked. Please allow microphone in site settings.');
+        if ($controls) showRecordHideStop($controls);
+        recognition = null;
+        activeTextBox = null;
+        activeControl = null;
+        return;
+      }
+    }
+
+    // finally start recognition
+    try {
+      recognition.start();
+    } catch (err) {
+      console.warn('recognition.start() threw', err);
+    }
+
   } catch (err) {
-    console.error('startRecording error', err);
-    alert('Unable to start speech recognition: ' + err.message);
+    console.error('newStartRecording error', err);
+    if ($controls) showRecordHideStop($controls);
     recognition = null;
     activeTextBox = null;
+    activeControl = null;
   }
 }
 
-function stopRecording() {
-  if (!recognition) {
-    console.log('No active recognition to stop');
-    return;
-  }
+// Core: stop recording; optionally pass controls to toggle UI
+function newStopRecording($controls) {
   try {
-    _isUserStopping = true;
-    // remove handlers to avoid stray events
-    recognition.onresult = null;
-    recognition.onerror = null;
-    recognition.onend = null;
-    try { recognition.stop(); } catch (e) { /* ignore */ }
-  } finally {
-    // ensure we clear references and placeholder
-    if (activeTextBox) {
-      activeTextBox.placeholder = '';
-      // clear temporary dataset.userText so next session starts fresh
-      delete activeTextBox.dataset.userText;
-      activeTextBox = null;
+    if (recognition) {
+      try { recognition.stop(); } catch (_) {}
+      // recognition.onend will do cleanup and UI swap
+    } else {
+      // still ensure UI swap even if no active recognition
+      if ($controls) showRecordHideStop($controls);
     }
+  } catch (err) {
+    console.error('newStopRecording error', err);
+    if ($controls) showRecordHideStop($controls);
     recognition = null;
-    console.log('Recording stopped by user');
+    activeTextBox = null;
+    activeControl = null;
   }
 }
+
+/*
+  Support for existing inline onclicks:
+  - startRecording('chief')  OR startRecording('chief', this)
+  - stopRecording() OR stopRecording(null, this)
+  We intercept clicks on such elements and forward to the new handlers, so your HTML need NOT change.
+*/
+
+// Intercept clicks for startRecording(...) inline handlers or delegation on buttons
+$(document).on('click', 'button, img, a', function (e) {
+  try {
+    const onclick = (this.getAttribute && this.getAttribute('onclick')) || '';
+    if (!onclick) return; // no inline onclick - nothing to intercept
+    // Normalize whitespace
+    const normalized = onclick.replace(/\s+/g, '');
+    // startRecording('id') or startRecording("id")
+    const startMatch = normalized.match(/startRecording\((['\"]?)([A-Za-z0-9_-]+)\1(?:,this)?\)/i);
+    if (startMatch) {
+      e.preventDefault();
+      const textBoxId = startMatch[2];
+      const $controls = findControlsFor(this);
+      // ensure stop button hidden/shown properly before starting
+      newStartRecording(textBoxId, $controls);
+      return;
+    }
+    // stopRecording() or stopRecording(null,this)
+    const stopMatch = normalized.match(/stopRecording\(([^)]*)\)/i);
+    if (stopMatch) {
+      e.preventDefault();
+      const $controls = findControlsFor(this);
+      newStopRecording($controls);
+      return;
+    }
+  } catch (err) {
+    console.error('click intercept error', err);
+  }
+});
+
+// Also attach handlers for elements that call startRecording/stopRecording programmatically
+// Provide backward-compatible global functions wrapper:
+window.startRecording = function(textBoxId, caller) {
+  const $controls = caller ? findControlsFor(caller) : (document.getElementById(textBoxId) ? $(document.getElementById(textBoxId)).closest('.controls') : null);
+  newStartRecording(textBoxId, $controls);
+};
+
+window.stopRecording = function(textBoxId, caller) {
+  const $controls = caller ? findControlsFor(caller) : (activeControl || null);
+  newStopRecording($controls);
+};
+
 
 function clearText(textBoxId) {
   const el = document.getElementById(textBoxId);
@@ -579,6 +897,7 @@ function clearText(textBoxId) {
   el.value = '';
   delete el.dataset.userText;
 }
+
 prescriptionModal
 function openModal(id) {
   document.getElementById(id).style.display = "block";
